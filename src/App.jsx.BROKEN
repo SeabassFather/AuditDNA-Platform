@@ -1,0 +1,28 @@
+﻿import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { LanguageProvider } from "@context/LanguageContext";
+import ProduceDashboard from './pages/produce/ProduceDashboard';
+import USDAIntelligenceDashboard from './pages/usda/USDAIntelligenceDashboard';
+import TraceabilityDashboard from './pages/traceability/TraceabilityDashboard';
+import WaterTechDashboard from './pages/watertech/WaterTechDashboard';
+import SupplierIntelligence from './pages/supplier/SupplierIntelligence';
+import CommoditySearch from "@pages/produce/CommoditySearch";
+import "./index.css";
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<ProduceDashboard />} />
+          <Route path="/produce" element={<ProduceDashboard />} />
+          <Route path="/produce/search" element={<CommoditySearch />} />
+          <Route path="/usda" element={<USDAIntelligenceDashboard />} />
+          <Route path="/traceability" element={<TraceabilityDashboard />} />
+          <Route path="/watertech" element={<WaterTechDashboard />} />
+          <Route path="/supplier" element={<SupplierIntelligence />} />
+        </Routes>
+      </Router>
+    </LanguageProvider>
+  );
+}

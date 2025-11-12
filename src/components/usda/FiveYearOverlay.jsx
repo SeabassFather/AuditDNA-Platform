@@ -1,0 +1,8 @@
+﻿import React from "react";
+export default function FiveYearOverlay({ data }) {
+  return (
+    <div className="p-6 font-bold">
+      FiveYearOverlay â€”Â overlay multi-year pricing trends here.
+    </div>
+  );
+}

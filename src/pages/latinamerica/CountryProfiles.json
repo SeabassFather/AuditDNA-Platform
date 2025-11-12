@@ -1,0 +1,4 @@
+import React from "react";
+export default function LatinAmericaDashboard() {
+  return <div className="p-8 font-bold text-2xl">LatinAmerica Dashboard — trade flows, compliance.</div>;
+}

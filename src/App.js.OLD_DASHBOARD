@@ -1,0 +1,1001 @@
+import React, { useState, useEffect } from 'react';
+import { BarChart3, Shield, Settings, TrendingUp, TrendingDown, Users, DollarSign, Upload, FileText, Search, X, Database, Scale, Briefcase } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import './App.css';
+
+// API Service Class
+class AuditDNAApiService {
+  constructor() {
+    this.cache = new Map();
+    this.baseUrl = process.env.REACT_APP_API_BASE || "http://localhost:5050";
+  }
+
+  async searchUSDAPricing(params) {
+    const key = JSON.stringify(params);
+    if (this.cache.has(key)) return this.cache.get(key);
+
+    const url = `${this.baseUrl}/usda/pricing?commodity=${encodeURIComponent(params.commodity)}&years=${params.years || 5}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("USDA API failed");
+    const data = await res.json();
+    this.cache.set(key, data);
+    return data;
+  }
+
+  async searchMortgageLenders(params) {
+    const url = `${this.baseUrl}/mortgage/search`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) throw new Error("Mortgage API failed");
+    return await res.json();
+  }
+
+  async searchFactoring(params) {
+    const url = `${this.baseUrl}/factoring/search`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) throw new Error("Factoring API failed");
+    return await res.json();
+  }
+
+  async searchLegalDocs(params) {
+    const url = `${this.baseUrl}/legal/search`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    if (!res.ok) throw new Error("Legal API failed");
+    return await res.json();
+  }
+
+  async uploadDocument(file, metadata) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('metadata', JSON.stringify(metadata));
+
+    const url = `${this.baseUrl}/documents/upload`;
+    const res = await fetch(url, {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) throw new Error("Upload failed");
+    return await res.json();
+  }
+}
+
+const api = new AuditDNAApiService();
+
+// Components
+function AnimatedBackground() {
+  return (
+    <div className="animated-bg">
+      <div className="grid-overlay"></div>
+      <div className="floating-particles">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className={`particle particle-${i + 1}`}></div>
+        ))}
+      </div>
+      <div className="gradient-orbs">
+        <div className="orb orb-1"></div>
+        <div className="orb orb-2"></div>
+        <div className="orb orb-3"></div>
+      </div>
+    </div>
+  );
+}
+
+function GlowingCard({ children, className = "", style = {}, ...props }) {
+  return (
+    <div className={`premium-card ${className}`} style={style} {...props}>
+      <div className="card-glow"></div>
+      <div className="card-content">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function useRotator(items, intervalMs = 3000) {
+  const [index, setIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  useEffect(() => {
+    if (items.length === 0) return;
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setIndex(prev => (prev + 1) % items.length);
+        setIsAnimating(false);
+      }, 150);
+    }, intervalMs);
+    return () => clearInterval(interval);
+  }, [items.length, intervalMs]);
+
+  return { current: items[index] || null, isAnimating };
+}
+
+function PremiumTicker({ data, title, icon, color }) {
+  const { current, isAnimating } = useRotator(data);
+  if (!current) return null;
+
+  return (
+    <GlowingCard className={`ticker-card ${isAnimating ? 'ticker-updating' : ''}`}>
+      <div className="ticker-header">
+        <div className="ticker-icon" style={{ color }}>{icon}</div>
+        <span className="ticker-label">{title}</span>
+        <div className="live-indicator">
+          <div className="pulse-dot"></div>
+          LIVE
+        </div>
+      </div>
+      <div className={`ticker-value ${isAnimating ? 'value-updating' : ''}`}>
+        {current.value}
+      </div>
+      <div className="ticker-footer">
+        <span className="ticker-type">{current.label}</span>
+        <div className={`ticker-change ${current.isPositive ? 'positive' : 'negative'}`}>
+          {current.isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+          <span className="change-value">{current.change}</span>
+        </div>
+      </div>
+    </GlowingCard>
+  );
+}
+
+function MortgageRatesTicker() {
+  const rates = [
+    { label: "30Y Fixed", value: "6.94%", change: "-0.02", isPositive: false },
+    { label: "15Y Fixed", value: "6.23%", change: "+0.01", isPositive: true },
+    { label: "5/1 ARM", value: "5.85%", change: "-0.05", isPositive: false }
+  ];
+  return <PremiumTicker data={rates} title="Mortgage Rates" icon={<TrendingUp size={18} />} color="#00ff88" />;
+}
+
+function AgCommoditiesTicker() {
+  const commodities = [
+    { label: "Corn", value: "$473.25", change: "+1.10", isPositive: true },
+    { label: "Soybeans", value: "$1,264.50", change: "-3.25", isPositive: false },
+    { label: "Wheat", value: "$604.75", change: "+0.75", isPositive: true }
+  ];
+  return <PremiumTicker data={commodities} title="Ag Commodities" icon="🌾" color="#4a96ff" />;
+}
+
+function EquitiesTicker() {
+  const markets = [
+    { label: "S&P 500", value: "5,510", change: "+12", isPositive: true },
+    { label: "NASDAQ", value: "23,784", change: "-31", isPositive: false },
+    { label: "DOW", value: "39,210", change: "+48", isPositive: true }
+  ];
+  return <PremiumTicker data={markets} title="Markets" icon="📈" color="#ff6b35" />;
+}
+
+// SEARCH ENGINE 1: USDA
+function USDASearchEngine() {
+  const [commodity, setCommodity] = useState('');
+  const [years, setYears] = useState(5);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async () => {
+    if (!commodity.trim()) {
+      setError('Please enter a commodity');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setData([]);
+
+    try {
+      const results = await api.searchUSDAPricing({ commodity, years });
+      setData(results);
+    } catch (err) {
+      setError('Failed to load USDA pricing data. Check API connection.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="search-engine-container">
+      <div className="search-engine-header">
+        <Database size={32} color="#00ff88" />
+        <div>
+          <h2>USDA Pricing Search Engine</h2>
+          <p>Live commodity pricing data with historical trends</p>
+        </div>
+      </div>
+
+      <GlowingCard className="search-form-card">
+        <div className="search-form-grid">
+          <div className="form-group">
+            <label>Commodity Name</label>
+            <input
+              type="text"
+              value={commodity}
+              onChange={(e) => setCommodity(e.target.value)}
+              placeholder="e.g. Avocados, Corn, Soybeans"
+              className="search-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Historical Years</label>
+            <select 
+              value={years} 
+              onChange={(e) => setYears(Number(e.target.value))}
+              className="search-input"
+            >
+              <option value={1}>1 Year</option>
+              <option value={3}>3 Years</option>
+              <option value={5}>5 Years</option>
+              <option value={10}>10 Years</option>
+            </select>
+          </div>
+
+          <button 
+            onClick={handleSearch} 
+            disabled={loading}
+            className="search-button"
+          >
+            <Search size={18} />
+            {loading ? 'Searching...' : 'Search USDA Data'}
+          </button>
+        </div>
+      </GlowingCard>
+
+      {error && (
+        <div className="error-message">
+          <X size={16} />
+          {error}
+        </div>
+      )}
+
+      {data.length > 0 && (
+        <GlowingCard className="results-card">
+          <h3>Pricing Results: {commodity}</h3>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
+              <XAxis dataKey="date" stroke="#8892a0" />
+              <YAxis stroke="#8892a0" />
+              <Tooltip 
+                contentStyle={{ background: '#1a1f2e', border: '1px solid #2a3441' }}
+                labelStyle={{ color: '#fff' }}
+              />
+              <Legend />
+              <Line type="monotone" dataKey="price" stroke="#00ff88" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </GlowingCard>
+      )}
+    </div>
+  );
+}
+
+// SEARCH ENGINE 2: Mortgage
+function MortgageSearchEngine() {
+  const [filters, setFilters] = useState({
+    state: '',
+    minFico: '',
+    loanAmount: '',
+    programType: 'all'
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async () => {
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await api.searchMortgageLenders(filters);
+      setResults(data);
+    } catch (err) {
+      setError('Failed to search mortgage lenders. Check API connection.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="search-engine-container">
+      <div className="search-engine-header">
+        <Database size={32} color="#4a96ff" />
+        <div>
+          <h2>Mortgage Lender Search Engine</h2>
+          <p>Find qualified mortgage lenders by state and criteria</p>
+        </div>
+      </div>
+
+      <GlowingCard className="search-form-card">
+        <div className="search-form-grid four-col">
+          <div className="form-group">
+            <label>State</label>
+            <input
+              type="text"
+              value={filters.state}
+              onChange={(e) => setFilters({...filters, state: e.target.value})}
+              placeholder="CA, TX, FL..."
+              className="search-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Min FICO Score</label>
+            <input
+              type="number"
+              value={filters.minFico}
+              onChange={(e) => setFilters({...filters, minFico: e.target.value})}
+              placeholder="620"
+              className="search-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Loan Amount</label>
+            <input
+              type="number"
+              value={filters.loanAmount}
+              onChange={(e) => setFilters({...filters, loanAmount: e.target.value})}
+              placeholder="$350,000"
+              className="search-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Program Type</label>
+            <select 
+              value={filters.programType}
+              onChange={(e) => setFilters({...filters, programType: e.target.value})}
+              className="search-input"
+            >
+              <option value="all">All Programs</option>
+              <option value="fha">FHA</option>
+              <option value="va">VA</option>
+              <option value="usda">USDA</option>
+              <option value="conventional">Conventional</option>
+              <option value="jumbo">Jumbo</option>
+            </select>
+          </div>
+        </div>
+
+        <button 
+          onClick={handleSearch} 
+          disabled={loading}
+          className="search-button full-width"
+        >
+          <Search size={18} />
+          {loading ? 'Searching Lenders...' : 'Search Mortgage Lenders'}
+        </button>
+      </GlowingCard>
+
+      {error && <div className="error-message"><X size={16} />{error}</div>}
+
+      {results.length > 0 && (
+        <div className="results-grid">
+          {results.map((lender, idx) => (
+            <GlowingCard key={idx} className="result-item">
+              <h4>{lender.name}</h4>
+              <div className="result-details">
+                <span><strong>Programs:</strong> {lender.programs?.join(', ')}</span>
+                <span><strong>States:</strong> {lender.states?.join(', ')}</span>
+                <span><strong>Min FICO:</strong> {lender.minFico}</span>
+              </div>
+              <button className="btn-primary small">Request Quote</button>
+            </GlowingCard>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// SEARCH ENGINE 3: Factoring
+function FactoringSearchEngine() {
+  const [filters, setFilters] = useState({
+    industry: '',
+    monthlyAR: '',
+    minAdvanceRate: ''
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async () => {
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await api.searchFactoring(filters);
+      setResults(data);
+    } catch (err) {
+      setError('Failed to search factoring companies. Check API connection.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="search-engine-container">
+      <div className="search-engine-header">
+        <Briefcase size={32} color="#ff6b35" />
+        <div>
+          <h2>Factoring Search Engine</h2>
+          <p>Find invoice factoring companies by industry and volume</p>
+        </div>
+      </div>
+
+      <GlowingCard className="search-form-card">
+        <div className="search-form-grid">
+          <div className="form-group">
+            <label>Industry</label>
+            <select
+              value={filters.industry}
+              onChange={(e) => setFilters({...filters, industry: e.target.value})}
+              className="search-input"
+            >
+              <option value="">All Industries</option>
+              <option value="produce">Produce</option>
+              <option value="manufacturing">Manufacturing</option>
+              <option value="logistics">Logistics</option>
+              <option value="construction">Construction</option>
+              <option value="healthcare">Healthcare</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Monthly A/R Volume</label>
+            <input
+              type="number"
+              value={filters.monthlyAR}
+              onChange={(e) => setFilters({...filters, monthlyAR: e.target.value})}
+              placeholder="$100,000"
+              className="search-input"
+            />
+          </div>
+
+          <button 
+            onClick={handleSearch} 
+            disabled={loading}
+            className="search-button"
+          >
+            <Search size={18} />
+            {loading ? 'Searching...' : 'Search Factors'}
+          </button>
+        </div>
+      </GlowingCard>
+
+      {error && <div className="error-message"><X size={16} />{error}</div>}
+
+      {results.length > 0 && (
+        <div className="results-grid">
+          {results.map((factor, idx) => (
+            <GlowingCard key={idx} className="result-item">
+              <h4>{factor.name}</h4>
+              <div className="result-details">
+                <span><strong>Industries:</strong> {factor.industries?.join(', ')}</span>
+                <span><strong>Advance Rate:</strong> {factor.advanceRate}%</span>
+                <span><strong>Fee Structure:</strong> {factor.feeStructure}</span>
+              </div>
+              <button className="btn-primary small">Request Info</button>
+            </GlowingCard>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// SEARCH ENGINE 4: Legal/Compliance
+function LegalSearchEngine() {
+  const [filters, setFilters] = useState({
+    query: '',
+    jurisdiction: 'all',
+    complianceType: 'all'
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async () => {
+    if (!filters.query.trim()) {
+      setError('Please enter a search term');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await api.searchLegalDocs(filters);
+      setResults(data);
+    } catch (err) {
+      setError('Failed to search legal documents. Check API connection.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="search-engine-container">
+      <div className="search-engine-header">
+        <Scale size={32} color="#8b5cf6" />
+        <div>
+          <h2>Legal & Compliance Search Engine</h2>
+          <p>Search regulatory documents, templates, and compliance frameworks</p>
+        </div>
+      </div>
+
+      <GlowingCard className="search-form-card">
+        <div className="search-form-grid">
+          <div className="form-group full-width">
+            <label>Search Query</label>
+            <input
+              type="text"
+              value={filters.query}
+              onChange={(e) => setFilters({...filters, query: e.target.value})}
+              placeholder="e.g. GDPR compliance, contract template..."
+              className="search-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Jurisdiction</label>
+            <select
+              value={filters.jurisdiction}
+              onChange={(e) => setFilters({...filters, jurisdiction: e.target.value})}
+              className="search-input"
+            >
+              <option value="all">All Jurisdictions</option>
+              <option value="federal">Federal (US)</option>
+              <option value="california">California</option>
+              <option value="texas">Texas</option>
+              <option value="eu">European Union</option>
+            </select>
+          </div>
+
+          <button 
+            onClick={handleSearch} 
+            disabled={loading}
+            className="search-button"
+          >
+            <Search size={18} />
+            {loading ? 'Searching...' : 'Search Documents'}
+          </button>
+        </div>
+      </GlowingCard>
+
+      {error && <div className="error-message"><X size={16} />{error}</div>}
+
+      {results.length > 0 && (
+        <div className="results-list">
+          {results.map((doc, idx) => (
+            <GlowingCard key={idx} className="document-result">
+              <div className="doc-header">
+                <FileText size={24} color="#8b5cf6" />
+                <div>
+                  <h4>{doc.title}</h4>
+                  <span className="doc-meta">{doc.jurisdiction} • {doc.type}</span>
+                </div>
+              </div>
+              <p className="doc-description">{doc.description}</p>
+              <div className="doc-actions">
+                <button className="btn-secondary small">View</button>
+                <button className="btn-primary small">Download</button>
+              </div>
+            </GlowingCard>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// SEARCH ENGINE 5: Services Catalog
+function ServicesSearchEngine() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
+  const services = [
+    { name: "USDA Weekly Pricing", category: "Agriculture", icon: "🌾" },
+    { name: "Mortgage Rate Search", category: "Mortgage", icon: "🏠" },
+    { name: "Invoice Factoring", category: "Factoring", icon: "💰" },
+    { name: "GDPR Compliance Audit", category: "Legal", icon: "⚖️" },
+    { name: "TRID Compliance", category: "Mortgage", icon: "🏠" },
+    { name: "Escrow Audit", category: "Compliance", icon: "🛡️" }
+  ];
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results = services.filter(s => 
+        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        s.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
+  return (
+    <div className="search-engine-container">
+      <div className="search-engine-header">
+        <Shield size={32} color="#00d4ff" />
+        <div>
+          <h2>Services Catalog Search</h2>
+          <p>Search across all 300+ professional audit services</p>
+        </div>
+      </div>
+
+      <GlowingCard className="search-form-card">
+        <div className="search-form-grid">
+          <div className="form-group">
+            <label>Search Services</label>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="e.g. USDA, mortgage, compliance..."
+              className="search-input"
+            />
+          </div>
+
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="btn-secondary">
+              <X size={16} /> Clear
+            </button>
+          )}
+        </div>
+      </GlowingCard>
+
+      {searchResults.length > 0 && (
+        <div className="results-grid">
+          {searchResults.map((result, idx) => (
+            <GlowingCard key={idx} className="service-result">
+              <div className="service-icon">{result.icon}</div>
+              <h4>{result.name}</h4>
+              <span className="service-category">{result.category}</span>
+              <button className="btn-primary small">Request Service</button>
+            </GlowingCard>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// SEARCH ENGINE 6: Document Upload
+function DocumentUploadEngine() {
+  const [file, setFile] = useState(null);
+  const [metadata, setMetadata] = useState({
+    category: '',
+    description: '',
+    clientName: ''
+  });
+  const [uploading, setUploading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setError('');
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setError('Please select a file');
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const result = await api.uploadDocument(file, metadata);
+      setSuccess(`Document uploaded successfully! ID: ${result.documentId}`);
+      setFile(null);
+      setMetadata({ category: '', description: '', clientName: '' });
+    } catch (err) {
+      setError('Upload failed. Check API connection.');
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="search-engine-container">
+      <div className="search-engine-header">
+        <Upload size={32} color="#10b981" />
+        <div>
+          <h2>Secure Document Upload Engine</h2>
+          <p>HIPAA/SOC 2 compliant encrypted document upload</p>
+        </div>
+      </div>
+
+      <GlowingCard className="upload-card">
+        <div className="upload-zone">
+          <Upload size={48} color="#00ff88" />
+          <h3>Drop files here or click to browse</h3>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="file-input"
+            accept=".pdf,.xlsx,.csv,.jpg,.png"
+          />
+          {file && (
+            <div className="selected-file">
+              <FileText size={20} />
+              <span>{file.name}</span>
+              <span className="file-size">({(file.size / 1024).toFixed(2)} KB)</span>
+            </div>
+          )}
+        </div>
+
+        <div className="metadata-form">
+          <div className="form-group">
+            <label>Document Category</label>
+            <select
+              value={metadata.category}
+              onChange={(e) => setMetadata({...metadata, category: e.target.value})}
+              className="search-input"
+            >
+              <option value="">Select Category</option>
+              <option value="audit">Audit Report</option>
+              <option value="compliance">Compliance Document</option>
+              <option value="financial">Financial Statement</option>
+              <option value="legal">Legal Document</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Client/Company Name</label>
+            <input
+              type="text"
+              value={metadata.clientName}
+              onChange={(e) => setMetadata({...metadata, clientName: e.target.value})}
+              placeholder="Client name"
+              className="search-input"
+            />
+          </div>
+
+          <div className="form-group full-width">
+            <label>Description</label>
+            <textarea
+              value={metadata.description}
+              onChange={(e) => setMetadata({...metadata, description: e.target.value})}
+              placeholder="Brief description..."
+              className="search-input"
+              rows="3"
+            />
+          </div>
+        </div>
+
+        <button 
+          onClick={handleUpload} 
+          disabled={uploading || !file}
+          className="search-button full-width"
+        >
+          <Upload size={18} />
+          {uploading ? 'Uploading...' : 'Upload Document'}
+        </button>
+
+        {error && <div className="error-message"><X size={16} />{error}</div>}
+        {success && <div className="success-message">{success}</div>}
+      </GlowingCard>
+    </div>
+  );
+}
+
+// Main App
+export default function AuditDNAApp() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeSearchEngine, setActiveSearchEngine] = useState('usda');
+
+  const navItems = [
+    { key: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { key: 'search', label: 'Search Engines', icon: Search },
+    { key: 'admin', label: 'Admin', icon: Settings }
+  ];
+
+  const searchEngines = [
+    { key: 'usda', label: 'USDA Pricing', icon: '🌾', component: USDASearchEngine },
+    { key: 'mortgage', label: 'Mortgage', icon: '🏠', component: MortgageSearchEngine },
+    { key: 'factoring', label: 'Factoring', icon: '💰', component: FactoringSearchEngine },
+    { key: 'legal', label: 'Legal/Compliance', icon: '⚖️', component: LegalSearchEngine },
+    { key: 'services', label: 'Services Catalog', icon: '🛡️', component: ServicesSearchEngine },
+    { key: 'upload', label: 'Document Upload', icon: '📤', component: DocumentUploadEngine }
+  ];
+
+  const stats = [
+    { label: "Total Services", value: "300+", icon: BarChart3, color: "#00ff88" },
+    { label: "Active Cases", value: "1,247", icon: Users, color: "#4a96ff" },
+    { label: "Total Recovery", value: "$2.8M", icon: DollarSign, color: "#ffd700" },
+    { label: "Success Rate", value: "89.4%", icon: TrendingUp, color: "#ff6b35" }
+  ];
+
+  const ActiveSearchComponent = searchEngines.find(e => e.key === activeSearchEngine)?.component || USDASearchEngine;
+
+  return (
+    <div className="app-container">
+      <AnimatedBackground />
+      
+      <header className="premium-header">
+        <div className="logo-container">
+          <div className="logo">AuditDNA</div>
+        </div>
+        
+        <nav className="nav-container">
+          {navItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.key}
+                className={`nav-tab ${activeTab === item.key ? "active" : ""}`}
+                onClick={() => setActiveTab(item.key)}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+        
+        <div className="status-badge">
+          <div className="pulse-dot"></div>
+          PRODUCTION
+        </div>
+      </header>
+
+      <main className="main-content">
+        {activeTab === 'dashboard' && (
+          <div>
+            <div className="search-engine-header">
+              <BarChart3 size={48} color="#00ff88" />
+              <div>
+                <h2>AuditDNA Platform Dashboard</h2>
+                <p>Professional Audit & Compliance Services - Saul Garcia, COO & CEO</p>
+              </div>
+            </div>
+
+            <div className="dashboard-grid">
+              <MortgageRatesTicker />
+              <AgCommoditiesTicker />
+              <EquitiesTicker />
+            </div>
+
+            <div className="stats-grid">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <GlowingCard key={index} className="stat-card">
+                    <div className="stat-header">
+                      <div className="stat-icon">
+                        <Icon size={24} style={{ color: stat.color }} />
+                      </div>
+                      <div className="stat-value">{stat.value}</div>
+                    </div>
+                    <div className="stat-label">{stat.label}</div>
+                  </GlowingCard>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'search' && (
+          <div>
+            <div className="search-engine-header">
+              <Search size={48} color="#00ff88" />
+              <div>
+                <h2>6 Professional Search Engines</h2>
+                <p>Comprehensive search and upload tools for audit services</p>
+              </div>
+            </div>
+
+            <div className="search-engine-selector">
+              {searchEngines.map(engine => (
+                <button
+                  key={engine.key}
+                  className={`engine-tab ${activeSearchEngine === engine.key ? 'active' : ''}`}
+                  onClick={() => setActiveSearchEngine(engine.key)}
+                >
+                  <span className="engine-icon">{engine.icon}</span>
+                  <span>{engine.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <ActiveSearchComponent />
+          </div>
+        )}
+
+        {activeTab === 'admin' && (
+          <div>
+            <div className="search-engine-header">
+              <Settings size={48} color="#4a96ff" />
+              <div>
+                <h2>System Administration</h2>
+                <p>Platform monitoring and configuration</p>
+              </div>
+            </div>
+
+            <div className="stats-grid">
+              {[
+                { label: "Total Users", value: "1,247", icon: Users, color: "#00ff88" },
+                { label: "Search Engines", value: "6", icon: Database, color: "#4a96ff" },
+                { label: "API Status", value: "Online", icon: Settings, color: "#ffd700" },
+                { label: "Uptime", value: "99.9%", icon: TrendingUp, color: "#ff6b35" }
+              ].map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <GlowingCard key={index} className="stat-card">
+                    <div className="stat-header">
+                      <div className="stat-icon">
+                        <Icon size={24} style={{ color: stat.color }} />
+                      </div>
+                      <div className="stat-value">{stat.value}</div>
+                    </div>
+                    <div className="stat-label">{stat.label}</div>
+                  </GlowingCard>
+                );
+              })}
+            </div>
+
+            <GlowingCard style={{ marginTop: '2rem' }}>
+              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.5rem', fontWeight: '700' }}>Search Engine Status</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {searchEngines.map(engine => (
+                  <div key={engine.key} style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    padding: '1rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '0.75rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <span style={{ fontSize: '1.5rem' }}>{engine.icon}</span>
+                      <span style={{ fontWeight: '600', color: '#fff' }}>{engine.label}</span>
+                    </div>
+                    <div style={{ 
+                      padding: '0.5rem 1rem', 
+                      background: 'rgba(0, 255, 136, 0.2)',
+                      color: '#00ff88',
+                      borderRadius: '1rem',
+                      fontSize: '0.85rem',
+                      fontWeight: '600'
+                    }}>
+                      ACTIVE
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </GlowingCard>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}

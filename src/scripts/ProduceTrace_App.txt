@@ -1,0 +1,149 @@
+# =====================================================================# FIND ALL MODULES & ORGANIZE INTO SEPARATE APPS
+# =====================================================================# This will search for and categorize all your modules into:
+# 1. PRODUCE/TRACEABILITY APP (Ag, USDA, WaterTech, Trace)
+# 2. AUDITDNA APP (Services, Factoring, Mortgage, Compliance, etc.)
+# =====================================================================
+$ErrorActionPreference = "Continue"
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "MODULE FINDER & ORGANIZER" -ForegroundColor Cyan
+Write-Host "========================================`n" -ForegroundColor Cyan
+
+$frontendPath = "C:\AuditDNA\AUDIT_DNA_Frontend_Final\frontend\src"
+
+# Define module categories
+$produceModules = @(
+    'Traceability*',
+    'Produce*',
+    'USDA*',
+    'Agriculture*',
+    'Grower*',
+    'Organic*',
+    'Marketplace*',
+    'WaterTech*',
+    'Water*',
+    'Soil*',
+    'ag*'
+)
+
+$auditDnaModules = @(
+    'Services*',
+    'Factoring*',
+    'Mortgage*',
+    'Compliance*',
+    'Upload*',
+    'Audit*'
+)
+
+Write-Host "ðŸ“ Scanning: $frontendPath`n" -ForegroundColor Yellow
+
+# Find all module-related files
+$allFiles = Get-ChildItem -Path $frontendPath -Recurse -File -Include *.jsx,*.js,*.json -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch 'node_modules' }
+
+# Categorize files
+$produceFiles = @()
+$auditDnaFiles = @()
+$otherFiles = @()
+
+foreach ($file in $allFiles) {
+    $matched = $false
+    
+    # Check if it's a Produce/Ag module
+    foreach ($pattern in $produceModules) {
+        if ($file.Name -like $pattern) {
+            $produceFiles += $file
+            $matched = $true
+            break
+        }
+    }
+    
+    # Check if it's an AuditDNA module
+    if (-not $matched) {
+        foreach ($pattern in $auditDnaModules) {
+            if ($file.Name -like $pattern) {
+                $auditDnaFiles += $file
+                $matched = $true
+                break
+            }
+        }
+    }
+    
+    # If still not matched, add to other
+    if (-not $matched -and $file.Directory.Name -match 'modules|pages|features') {
+        $otherFiles += $file
+    }
+}
+
+# Display results
+Write-Host "`nðŸŒ¾ PRODUCE/TRACEABILITY MODULES ($($produceFiles.Count) files)" -ForegroundColor Green
+Write-Host "=" * 80 -ForegroundColor Gray
+$produceFiles | ForEach-Object {
+    Write-Host "  âœ“ $($_.Name)" -ForegroundColor Green
+    Write-Host "    $($_.FullName)" -ForegroundColor Gray
+}
+
+Write-Host "`nðŸ“Š AUDITDNA MODULES ($($auditDnaFiles.Count) files)" -ForegroundColor Cyan
+Write-Host "=" * 80 -ForegroundColor Gray
+$auditDnaFiles | ForEach-Object {
+    Write-Host "  âœ“ $($_.Name)" -ForegroundColor Cyan
+    Write-Host "    $($_.FullName)" -ForegroundColor Gray
+}
+
+Write-Host "`nðŸ“¦ OTHER MODULE FILES ($($otherFiles.Count) files)" -ForegroundColor Yellow
+Write-Host "=" * 80 -ForegroundColor Gray
+$otherFiles | Select-Object -First 20 | ForEach-Object {
+    Write-Host "  â€¢ $($_.Name)" -ForegroundColor Yellow
+    Write-Host "    $($_.FullName)" -ForegroundColor Gray
+}
+
+# Create organization report
+$reportPath = "C:\AuditDNA\MODULE_ORGANIZATION_REPORT.txt"
+$report = @"
+=================================MODULE ORGANIZATION REPORT
+Generated: $(Get-Date)
+=================================
+PRODUCE/TRACEABILITY APP MODULES ($($produceFiles.Count) files)
+----------------------------------------
+$($produceFiles | ForEach-Object { $_.FullName } | Out-String)
+
+AUDITDNA APP MODULES ($($auditDnaFiles.Count) files)
+----------------------------------------
+$($auditDnaFiles | ForEach-Object { $_.FullName } | Out-String)
+
+OTHER MODULE FILES ($($otherFiles.Count) files)
+----------------------------------------
+$($otherFiles | ForEach-Object { $_.FullName } | Out-String)
+
+=================================RECOMMENDED APP STRUCTURE
+=================================
+PRODUCE/TRACEABILITY APP
+- Traceability & tracking
+- USDA integration
+- Water technology
+- Soil analysis
+- Grower profiles
+- Agricultural marketplace
+
+AUDITDNA APP
+- Services management
+- Factoring
+- Mortgage audits
+- Compliance tracking
+- Document uploads
+- General audit tools
+
+"@
+
+$report | Out-File -FilePath $reportPath -Encoding UTF8
+
+Write-Host "`nðŸ’¾ Report saved to: $reportPath" -ForegroundColor Green
+
+# Show summary
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "SUMMARY" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "ðŸŒ¾ Produce/Trace modules: $($produceFiles.Count) files" -ForegroundColor Green
+Write-Host "ðŸ“Š AuditDNA modules: $($auditDnaFiles.Count) files" -ForegroundColor Cyan
+Write-Host "ðŸ“¦ Other modules: $($otherFiles.Count) files" -ForegroundColor Yellow
+Write-Host "`nReport: $reportPath`n" -ForegroundColor White

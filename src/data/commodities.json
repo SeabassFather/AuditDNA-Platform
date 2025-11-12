@@ -1,0 +1,8 @@
+﻿{
+  "avocado": {"name":"Avocado","varieties":["Hass","Fuerte","Zutano"],"packs":["32ct","36ct","48ct"],"regions":["CA","MX","PE"],"category":"Fruit","hsCode":"0804.40","currentPrice":48.50,"retailPrice":65.50,"costEstimate":38.20,"unit":"lb","seasonality":[8,9,10,9,8,7,6,7,8,9,10,9]},
+  "strawberry": {"name":"Strawberry","varieties":["San Andreas","Albion"],"packs":["8x1lb","12x1pt"],"regions":["CA","FL","MX"],"category":"Berry","hsCode":"0810.10","currentPrice":32.00,"retailPrice":43.20,"costEstimate":25.60,"unit":"lb","seasonality":[6,8,10,9,7,5,4,5,6,7,8,7]},
+  "blueberry": {"name":"Blueberry","varieties":["Duke","Bluecrop"],"packs":["6oz","12oz"],"regions":["CA","OR","PE"],"category":"Berry","hsCode":"0810.40","currentPrice":52.50,"retailPrice":70.80,"costEstimate":42.00,"unit":"lb","seasonality":[5,6,8,10,9,7,6,5,6,7,8,6]},
+  "tomato-roma": {"name":"Tomato (Roma)","varieties":["Roma","Plum"],"packs":["25lb box"],"regions":["CA","FL","MX"],"category":"Vegetable","hsCode":"0702.00","currentPrice":22.50,"retailPrice":30.38,"costEstimate":18.00,"unit":"lb","seasonality":[7,8,9,10,9,8,7,8,9,10,9,8]},
+  "pepper-bell-green": {"name":"Pepper (Bell - Green)","varieties":["California Wonder"],"packs":["11lb carton"],"regions":["CA","MX"],"category":"Vegetable","hsCode":"0709.60","currentPrice":24.50,"retailPrice":33.08,"costEstimate":19.60,"unit":"lb","seasonality":[8,9,10,10,9,8,7,8,9,10,9,8]},
+  "mango-ataulfo": {"name":"Mango (Ataulfo)","varieties":["Ataulfo","Honey"],"packs":["4kg flat"],"regions":["MX"],"category":"Fruit","hsCode":"0804.50","currentPrice":28.50,"retailPrice":38.48,"costEstimate":22.80,"unit":"lb","seasonality":[5,6,8,10,9,7,5,4,5,6,7,6]}
+}

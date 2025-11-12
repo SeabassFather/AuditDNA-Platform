@@ -1,0 +1,21 @@
+﻿# Backups
+_backup*/
+backup/
+BACKUP*/
+BackUp*/
+*_backup/
+
+# Build files
+build/
+dist/
+node_modules/
+
+# Logs
+*.log
+
+# Junk files
+alert*
+console.*
+et HEAD*
+{*
+}*

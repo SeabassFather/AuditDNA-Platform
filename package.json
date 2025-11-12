@@ -1,0 +1,60 @@
+{
+  "name": "auditdna-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AuditDNA - Agricultural Intelligence Platform | Built by SeabassFather",
+  "author": "SeabassFather <seabassfather@auditdna.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.9",
+    "@fullcalendar/interaction": "^6.1.9",
+    "@fullcalendar/react": "^6.1.9",
+    "@fullcalendar/timegrid": "^6.1.9",
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
+    "lucide-react": "^0.553.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.15.4",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "set PORT=3000 && react-scripts --max_old_space_size=4096 start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "clean": "rimraf node_modules build dist .cache",
+    "reinstall": "npm run clean && npm install"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ],
+    "rules": {
+      "no-unused-vars": "warn",
+      "react/prop-types": "off"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  }
+}

@@ -1,0 +1,43 @@
+/* ===== AuditDNA Metallic Light Theme ===== */
+.navbar {
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(230,245,230,0.8));
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.navlink {
+  font-weight: 500;
+  color: #2f855a;
+  transition: all 0.2s ease;
+}
+
+.navlink:hover {
+  color: #15803d;
+  text-decoration: underline;
+}
+
+.lang-btn {
+  font-weight: 500;
+}
+
+.ticker {
+  padding: 6px 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* ===== Glass Card Styling ===== */
+.glass-card {
+  background: rgba(255,255,255,0.7);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.25s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255,255,255,0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}

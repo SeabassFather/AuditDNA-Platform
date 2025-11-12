@@ -1,0 +1,255 @@
+import React, { useState } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { CartProvider } from './CartContext';
+import { LanguageProvider, useLanguage } from './LanguageContext';
+
+// ALL COMPONENTS IN SRC ROOT - NO SUBFOLDERS
+import WaterTechModuleAdvanced from './WaterTechModuleAdvanced';
+import ProduceAnalyticsPanel from './ProduceAnalyticsPanel';
+import ProducePOForm from './ProducePOForm';
+import FactoringDashboard from './FactoringDashboard';
+import CartSummary from './CartSummary';
+import WaterResultsAnalysis from './WaterResultsAnalysis';
+
+function AppContent() {
+  const { language, toggleLanguage } = useLanguage();
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const menuItems = [
+    { id: 'home', label: { en: '🏠 Home', es: '🏠 Inicio' } },
+    { id: 'water-tech', label: { en: '💧 Water Upload', es: '💧 Subir Agua' } },
+    { id: 'water-results', label: { en: '🔬 Water Results', es: '🔬 Resultados Agua' } },
+    { id: 'produce-analytics', label: { en: '📊 Market', es: '📊 Mercado' } },
+    { id: 'produce-po', label: { en: '📄 PO', es: '📄 OC' } },
+    { id: 'factoring', label: { en: '💰 Finance', es: '💰 Finanzas' } },
+    { id: 'cart', label: { en: '🛒 Cart', es: '🛒 Carrito' } },
+  ];
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage setCurrentPage={setCurrentPage} />;
+      case 'water-tech':
+        return <WaterTechModuleAdvanced />;
+      case 'water-results':
+        return <WaterResultsAnalysis />;
+      case 'produce-analytics':
+        return <ProduceAnalyticsPanel commodity="TOMATOES" />;
+      case 'produce-po':
+        return <ProducePOForm onNext={() => setCurrentPage('cart')} />;
+      case 'factoring':
+        return <FactoringDashboard />;
+      case 'cart':
+        return <CartPage />;
+      default:
+        return <HomePage setCurrentPage={setCurrentPage} />;
+    }
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
+      <nav style={{ background: 'rgba(15, 23, 42, 0.95)', borderBottom: '2px solid #334155', padding: '1rem 2rem', position: 'sticky', top: 0, zIndex: 1000 }}>
+        <div style={{ maxWidth: '1600px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#06b6d4', cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>
+            🧬 AuditDNA
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            {menuItems.map(item => (
+              <button
+                key={item.id}
+                onClick={() => setCurrentPage(item.id)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: currentPage === item.id ? '#06b6d4' : 'transparent',
+                  border: '1px solid #334155',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  transition: 'all 0.3s',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseEnter={(e) => {
+                  if (currentPage !== item.id) {
+                    e.currentTarget.style.background = 'rgba(6, 182, 212, 0.2)';
+                    e.currentTarget.style.borderColor = '#06b6d4';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (currentPage !== item.id) {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = '#334155';
+                  }
+                }}
+              >
+                {item.label[language]}
+              </button>
+            ))}
+            <button
+              onClick={toggleLanguage}
+              style={{
+                padding: '0.5rem 1rem',
+                background: '#10b981',
+                border: 'none',
+                borderRadius: '8px',
+                color: '#fff',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                fontSize: '0.85rem'
+              }}
+            >
+              {language === 'en' ? '🇪🇸 ES' : '🇺🇸 EN'}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div style={{ padding: '2rem' }}>
+        {renderPage()}
+      </div>
+    </div>
+  );
+}
+
+function HomePage({ setCurrentPage }) {
+  const { language } = useLanguage();
+
+  const features = [
+    {
+      id: 'water-tech',
+      icon: '💧',
+      title: { en: 'Water Upload', es: 'Subir Agua' },
+      desc: { en: 'Upload lab results - 150+ parameters analyzed', es: 'Sube resultados - 150+ parámetros analizados' },
+      price: '$149'
+    },
+    {
+      id: 'water-results',
+      icon: '🔬',
+      title: { en: 'Water Results', es: 'Resultados Agua' },
+      desc: { en: 'EPA/WHO compliance + recommendations', es: 'Cumplimiento EPA/WHO + recomendaciones' },
+      price: 'Included'
+    },
+    {
+      id: 'produce-analytics',
+      icon: '📊',
+      title: { en: 'Market Intel', es: 'Intel Mercado' },
+      desc: { en: 'USDA data + regional trends', es: 'Datos USDA + tendencias regionales' },
+      price: 'Free'
+    },
+    {
+      id: 'produce-po',
+      icon: '📄',
+      title: { en: 'Purchase Orders', es: 'Órdenes Compra' },
+      desc: { en: 'Generate POs with PDF export', es: 'Genera OCs con exportación PDF' },
+      price: 'Free'
+    },
+    {
+      id: 'factoring',
+      icon: '💰',
+      title: { en: 'Trade Finance', es: 'Financiamiento' },
+      desc: { en: 'Invoice factoring solutions', es: 'Soluciones de factoraje' },
+      price: 'Variable'
+    }
+  ];
+
+  return (
+    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <h1 style={{ fontSize: '3.5rem', color: '#06b6d4', marginBottom: '1rem', textShadow: '0 0 30px rgba(6, 182, 212, 0.6)' }}>
+          {language === 'en' ? 'Welcome to AuditDNA' : 'Bienvenido a AuditDNA'}
+        </h1>
+        <p style={{ fontSize: '1.3rem', color: '#94a3b8', maxWidth: '900px', margin: '0 auto', lineHeight: '1.6' }}>
+          {language === 'en' 
+            ? 'Advanced agricultural intelligence, compliance auditing & traceability powered by AI'
+            : 'Inteligencia agrícola avanzada, auditoría de cumplimiento y trazabilidad con IA'}
+        </p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+        {features.map(feature => (
+          <div
+            key={feature.id}
+            onClick={() => setCurrentPage(feature.id)}
+            style={{
+              background: 'rgba(30, 41, 59, 0.8)',
+              border: '2px solid rgba(6, 182, 212, 0.3)',
+              borderRadius: '20px',
+              padding: '2rem',
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              textAlign: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.borderColor = '#06b6d4';
+              e.currentTarget.style.boxShadow = '0 20px 60px rgba(6, 182, 212, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>{feature.icon}</div>
+            <h3 style={{ fontSize: '1.4rem', color: '#06b6d4', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              {feature.title[language]}
+            </h3>
+            <p style={{ color: '#94a3b8', marginBottom: '1rem', minHeight: '3rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
+              {feature.desc[language]}
+            </p>
+            <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#10b981' }}>
+              {feature.price}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop: '4rem', textAlign: 'center', padding: '2.5rem', background: 'rgba(6, 182, 212, 0.1)', borderRadius: '20px', border: '2px solid rgba(6, 182, 212, 0.3)' }}>
+        <h2 style={{ fontSize: '2.2rem', color: '#06b6d4', marginBottom: '1.5rem', fontWeight: 'bold' }}>
+          {language === 'en' ? '🚀 Platform Features' : '🚀 Características'}
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', color: '#94a3b8', fontSize: '1.05rem' }}>
+          <div>✅ {language === 'en' ? 'EPA/WHO/USDA Compliance' : 'Cumplimiento EPA/WHO/USDA'}</div>
+          <div>✅ {language === 'en' ? 'AI-Powered Analysis' : 'Análisis con IA'}</div>
+          <div>✅ {language === 'en' ? 'Real-time Data' : 'Datos Tiempo Real'}</div>
+          <div>✅ {language === 'en' ? 'Bilingual EN/ES' : 'Bilingüe EN/ES'}</div>
+          <div>✅ {language === 'en' ? 'Expert Consultation' : 'Consulta Experta'}</div>
+          <div>✅ {language === 'en' ? 'Full Traceability' : 'Trazabilidad Completa'}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CartPage() {
+  const { language } = useLanguage();
+  return (
+    <div style={{ maxWidth: '1200px', margin: '0 auto', color: '#fff' }}>
+      <h2 style={{ fontSize: '2.5rem', color: '#06b6d4', marginBottom: '2rem' }}>
+        {language === 'en' ? '🛒 Shopping Cart' : '🛒 Carrito de Compras'}
+      </h2>
+      <CartSummary />
+      <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(30, 41, 59, 0.8)', borderRadius: '15px', border: '1px solid rgba(6, 182, 212, 0.3)' }}>
+        <p style={{ fontSize: '1.2rem', color: '#94a3b8', textAlign: 'center' }}>
+          {language === 'en' 
+            ? 'Cart items appear here. Add services from Water Analysis.'
+            : 'Artículos del carrito aparecen aquí. Agregue servicios.'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <CartProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </CartProvider>
+    </LanguageProvider>
+  );
+}
+
+export default App;

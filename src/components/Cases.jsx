@@ -1,0 +1,3 @@
+﻿// was: if(!confirm("Delete?")) ...
+if (!window.confirm("Delete?")) return;
+

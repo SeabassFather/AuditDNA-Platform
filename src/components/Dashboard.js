@@ -1,0 +1,106 @@
+﻿import React, { useState, useEffect } from 'react';
+import ContactCard from '../components/ContactCard'; // Enhanced module access request form
+
+// --- Dashboard.js ---
+// Last updated: 2025-10-14 22:44 UTC
+// Dashboard now requires per-module access approval via ContactCard.
+// Only approved users can view dashboard data; others will see request/pending screen.
+
+export default function Dashboard({ dashboardData }) {
+  // Track module approval status (replace with real API check in production)
+  const [approved, setApproved] = useState(false);
+
+  // On mount, check if user is approved for Dashboard
+  useEffect(() => {
+    async function checkApproval() {
+      // Replace with real API call to your backend for production
+      try {
+        const res = await fetch('/api/module-approval-status?module=Dashboard');
+        if (res.ok) {
+          const data = await res.json();
+          setApproved(!!data.approved);
+        } else {
+          setApproved(false);
+        }
+      } catch (err) {
+        setApproved(false);
+      }
+    }
+    checkApproval();
+  }, []);
+
+  // If not approved, show ContactCard to request access
+  if (!approved) {
+    return <ContactCard moduleName="Dashboard" language="english" />;
+  }
+
+  // --- APPROVED DASHBOARD VIEW ---
+  const s = {
+    card: { background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)', borderRadius: '16px', padding: '24px', marginBottom: '20px', border: '2px solid #e3f2fd', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', color: '#2d3748' }
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', overflowX: 'auto', paddingBottom: '10px' }}>
+        {dashboardData.tickers.mortgage?.length > 0 && (
+          <div style={{ minWidth: '300px', background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)', borderRadius: '12px', padding: '16px', border: '2px solid #e3f2fd', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            <div style={{ fontSize: '14px', color: '#2d3748', marginBottom: '12px', fontWeight: '600' }}>Ã°Å¸ÂÂ  Mortgage</div>
+            <div style={{ fontSize: '14px', color: '#2d3748', marginBottom: '12px', fontWeight: '600' }}>ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€šÃ‚ÂÃƒâ€šÃ‚Â  Mortgage</div>
+            {dashboardData.tickers.mortgage.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ color: '#4a5568', fontSize: '14px', fontWeight: '500' }}>{item.label}</span>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ color: '#1a365d', fontWeight: '700', fontSize: '15px' }}>{item.value}</span>
+                  <span style={{ color: item.isPositive ? '#4caf50' : '#f44336', fontSize: '13px', fontWeight: '600' }}>{item.isPositive ? 'Ã¢â€“Â²' : 'Ã¢â€“Â¼'} {item.change}</span>
+                  <span style={{ color: item.isPositive ? '#4caf50' : '#f44336', fontSize: '13px', fontWeight: '600' }}>{item.isPositive ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“Ãƒâ€šÃ‚Â²' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“Ãƒâ€šÃ‚Â¼'} {item.change}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {dashboardData.tickers.commodities?.length > 0 && (
+          <div style={{ minWidth: '300px', background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)', borderRadius: '12px', padding: '16px', border: '2px solid #e3f2fd', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            <div style={{ fontSize: '14px', color: '#2d3748', marginBottom: '12px', fontWeight: '600' }}>Ã°Å¸Å’Â¾ Commodities</div>
+            <div style={{ fontSize: '14px', color: '#2d3748', marginBottom: '12px', fontWeight: '600' }}>ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸Ãƒâ€¦Ã¢â‚¬â„¢Ãƒâ€šÃ‚Â¾ Commodities</div>
+            {dashboardData.tickers.commodities.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ color: '#4a5568', fontSize: '14px', fontWeight: '500' }}>{item.label}</span>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ color: '#1a365d', fontWeight: '700', fontSize: '15px' }}>{item.value}</span>
+                  <span style={{ color: item.isPositive ? '#4caf50' : '#f44336', fontSize: '13px', fontWeight: '600' }}>{item.isPositive ? 'Ã¢â€“Â²' : 'Ã¢â€“Â¼'} {item.change}</span>
+                  <span style={{ color: item.isPositive ? '#4caf50' : '#f44336', fontSize: '13px', fontWeight: '600' }}>{item.isPositive ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“Ãƒâ€šÃ‚Â²' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“Ãƒâ€šÃ‚Â¼'} {item.change}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {dashboardData.tickers.markets?.length > 0 && (
+          <div style={{ minWidth: '300px', background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)', borderRadius: '12px', padding: '16px', border: '2px solid #e3f2fd', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            <div style={{ fontSize: '14px', color: '#2d3748', marginBottom: '12px', fontWeight: '600' }}>Ã°Å¸â€œË† Markets</div>
+            <div style={{ fontSize: '14px', color: '#2d3748', marginBottom: '12px', fontWeight: '600' }}>ÃƒÆ’Ã‚Â°Ãƒâ€¦Ã‚Â¸ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒâ€¹Ã¢â‚¬Â  Markets</div>
+            {dashboardData.tickers.markets.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span style={{ color: '#4a5568', fontSize: '14px', fontWeight: '500' }}>{item.label}</span>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ color: '#1a365d', fontWeight: '700', fontSize: '15px' }}>{item.value}</span>
+                  <span style={{ color: item.isPositive ? '#4caf50' : '#f44336', fontSize: '13px', fontWeight: '600' }}>{item.isPositive ? 'Ã¢â€“Â²' : 'Ã¢â€“Â¼'} {item.change}</span>
+                  <span style={{ color: item.isPositive ? '#4caf50' : '#f44336', fontSize: '13px', fontWeight: '600' }}>{item.isPositive ? 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“Ãƒâ€šÃ‚Â²' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“Ãƒâ€šÃ‚Â¼'} {item.change}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {dashboardData.stats?.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+          {dashboardData.stats.map((stat, idx) => (
+            <div key={idx} style={s.card}>
+              <div style={{ fontSize: '14px', color: '#718096', marginBottom: '8px', fontWeight: '500' }}>{stat.label}</div>
+              <div style={{ fontSize: '32px', fontWeight: '800', color: '#1a365d' }}>{stat.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
