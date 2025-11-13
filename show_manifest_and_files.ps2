@@ -1,0 +1,76 @@
+# show_manifest_and_files.ps1
+# Run this ONE file in a NEW PowerShell window.
+# It prints the manifest and module file lists in clearly labeled sections for easy copy/paste.
+
+# Set paths
+$repo = "C:\AuditDNA\modules_frontend_repo"
+$manifestPattern = Join-Path $repo "copy_manifest_*.txt"
+
+if (-not (Test-Path $repo)) {
+  Write-Host "ERROR: Repo path not found: $repo"
+  exit 1
+}
+
+# Helper to print a header
+function H($text) { Write-Host ""; Write-Host "========== $text =========="; Write-Host "" }
+
+Set-Location $repo
+
+# 1) Print manifest full contents (if more than one, prints newest first)
+H "MANIFEST (full contents of newest copy_manifest_*.txt)"
+$manifest = Get-ChildItem -Path $manifestPattern -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+if ($manifest) {
+  Write-Host "Manifest file: $($manifest.FullName)`n"
+  Get-Content $manifest.FullName -Raw
+} else {
+  Write-Host "No manifest found matching: $manifestPattern"
+}
+
+# 2) Print manifest with numbered lines (for easy quoting)
+H "MANIFEST (numbered lines)"
+if ($manifest) {
+  $i = 0
+  Get-Content $manifest.FullName | ForEach-Object { $i++; '{0:D3}: {1}' -f $i, $_ }
+} else {
+  Write-Host "No manifest to number."
+}
+
+# 3) Open manifest in Notepad (uncomment the next line if you want it opened automatically)
+# Start-Process notepad $manifest.FullName
+
+# 4) List copied module files (patterns) ordered by LastWriteTime
+H "COPIED MODULE FILES (Produce/USDA/FoodSafety/Traceability/WaterTec/WaterTech/Factoring) - newest first"
+Get-ChildItem -Path $repo -Recurse -File |
+  Where-Object { $_.FullName -match 'Produce|USDA|FoodSafety|Traceability|WaterTec|WaterTech|Factoring' } |
+  Sort-Object LastWriteTime -Descending |
+  Select-Object @{Name='Path';Expression={$_.FullName}}, @{Name='SizeKB';Expression={[math]::Round($_.Length/1KB,2)}}, LastWriteTime |
+  Format-Table -AutoSize
+
+# 5) Show entry files (index.js/index.jsx/App.js/App.jsx) if present
+H "ENTRY FILES (index/App candidates)"
+Get-ChildItem -Path $repo -Recurse -Include "index.js","index.jsx","App.js","App.jsx" -File -ErrorAction SilentlyContinue |
+  Select-Object @{Name='Path';Expression={$_.FullName}}, LastWriteTime |
+  Format-Table -AutoSize
+
+# 6) Compact list of all files (paths only) saved to a file for review
+H "WRITING COMPACT FILE LIST TO: compact_file_list.txt"
+Get-ChildItem -Path $repo -Recurse -File | Select-Object -ExpandProperty FullName | Out-File -FilePath (Join-Path $repo "compact_file_list.txt") -Encoding UTF8
+Get-Content (Join-Path $repo "compact_file_list.txt") -TotalCount 200
+
+# 7) Show top-level tree (depth 2) for quick visual overview
+H "TOP-LEVEL TREE (depth 2)"
+Get-ChildItem -Path $repo -Recurse -Depth 2 -Force | Sort-Object FullName | Select-Object FullName, @{Name='Type';Expression={ if ($_.PSIsContainer) {'DIR'} else {'FILE'} }}, LastWriteTime | Format-Table -AutoSize
+
+# 8) If you want to install and start the new repo, uncomment the following block and run the script again.
+<# 
+H "INSTALL & START (uncomment to enable)"
+# Set-Location $repo
+# npm install
+# $ts = Get-Date -Format yyyyMMddHHmmss
+# $installLog = ".\npm_install_$ts.log"
+# $startLog = ".\npm_start_$ts.log"
+# $cmd = "npm install 2>&1 | Tee-Object -FilePath `"$installLog`" ; npm start 2>&1 | Tee-Object -FilePath `"$startLog`""
+# Start-Process -FilePath powershell -ArgumentList '-NoExit','-Command',$cmd -WorkingDirectory (Get-Location)
+# Write-Host "INSTALL_LOG:$installLog START_LOG:$startLog"
+#>
+H "DONE - Review the printed sections above. Copy/paste any output you want me to act on next."

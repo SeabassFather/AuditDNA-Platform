@@ -1,0 +1,348 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20251029164859
+Username: MFGIINC\Mexausa
+RunAs User: MFGIINC\Mexausa
+Configuration Name: 
+Machine: MFGIINC (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 12196
+PSVersion: 5.1.26100.6725
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6725
+BuildVersion: 10.0.26100.6725
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\transfer_transcript_20251029-164859.txt
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Prompt for Source folder (where your "supreme" frontend files live)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $defaultSuggested = ''
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "STEP 1  Enter the FULL path to the folder that contains the SUPREME frontend files."
+STEP 1  Enter the FULL path to the folder that contains the SUPREME frontend files.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Example: C:\Users\You\Desktop\supreme_frontend"
+Example: C:\Users\You\Desktop\supreme_frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $SourceFolder = Read-Host "Source folder (paste full path here)"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if (-not $SourceFolder -or -not (Test-Path $SourceFolder)) {
+    Write-Host ""
+    Write-Host "ERROR: Source folder is missing or invalid. Aborting."
+    Stop-Transcript 2>$null
+    exit 1
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Find repo root (ensure we are inside a git repo)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> try {
+    $repoRoot = (git rev-parse --show-toplevel).Trim()
+} catch {
+    Write-Host ""
+    Write-Host "ERROR: This script must be run from inside a git repository. Aborting."
+    Stop-Transcript 2>$null
+    exit 1
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "REPO_ROOT: $repoRoot"
+REPO_ROOT: C:/AuditDNA/AuditDNA_Supreme_Frontend/frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Destination frontend folder inside repo
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $dest = Join-Path $repoRoot "frontend"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Timestamp and branch names
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $preSnapshotBranch = "pre-transfer-snapshot-$timestamp"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $transferBranch = "transfer-supreme-$timestamp"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $backupRoot = Join-Path $repoRoot "transfer_backups"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $backup = Join-Path $backupRoot "backup_$timestamp"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "SUMMARY OF ACTIONS (preview):"
+SUMMARY OF ACTIONS (preview):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "  Source: $SourceFolder"
+  Source: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "  Destination (repo frontend): $dest"
+  Destination (repo frontend): C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "  Backup location: $backup"
+  Backup location: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\transfer_backups\backup_20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "  Snapshot branch (safe rollback): $preSnapshotBranch"
+  Snapshot branch (safe rollback): pre-transfer-snapshot-20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "  Transfer branch to be created: $transferBranch"
+  Transfer branch to be created: transfer-supreme-20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $ok = Read-Host "Type YES to proceed with the above actions (or anything else to cancel)"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($ok -ne "YES") {
+    Write-Host "Cancelled by user. No changes made."
+    Stop-Transcript 2>$null
+    exit 0
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Create backup dir and copy existing frontend to backup (if dest exists)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if (Test-Path $dest) {
+    New-Item -ItemType Directory -Path $backup -Force | Out-Null
+    Write-Host "Backing up existing frontend -> $backup (this may take a moment)..."
+    # Use robocopy for robust Windows copying; exclude node_modules and .git
+    $robocopyArgs = @($dest, $backup, "/E", "/COPYALL", "/R:2", "/W:1", "/XD", ".git", "node_modules", "transfer_backups", "/NFL", "/NDL")
+    $rc = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
+    if ($rc.ExitCode -le 7) {
+        Write-Host "BACKUP_DONE: $backup (robocopy exit code $($rc.ExitCode))"
+    } else {
+        Write-Host "WARNING: robocopy returned code $($rc.ExitCode). Check $backup for completeness."
+    }
+} else {
+    Write-Host "Destination frontend did not exist. Creating folder: $dest"
+    New-Item -ItemType Directory -Path $dest -Force | Out-Null
+    Write-Host "DEST_CREATED"
+}
+Destination frontend did not exist. Creating folder: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend
+DEST_CREATED
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Create a safe snapshot branch (local only) for rollback
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Creating snapshot branch: $preSnapshotBranch"
+Creating snapshot branch: pre-transfer-snapshot-20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git branch $preSnapshotBranch 2>$null
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($LASTEXITCODE -eq 0) { Write-Host "SNAPSHOT_BRANCH_CREATED: $preSnapshotBranch" } else { Write-Host "SNAPSHOT_BRANCH_MAY_EXIST_OR_FAILED" }
+SNAPSHOT_BRANCH_CREATED: pre-transfer-snapshot-20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Create and switch to transfer branch
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Creating and switching to transfer branch: $transferBranch"
+Creating and switching to transfer branch: transfer-supreme-20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git checkout -b $transferBranch
+Switched to a new branch 'transfer-supreme-20251029-164920'
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: failed to create or checkout branch $transferBranch. Aborting."
+    Stop-Transcript 2>$null
+    exit 1
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "ON_BRANCH: $(git rev-parse --abbrev-ref HEAD)."
+ON_BRANCH: transfer-supreme-20251029-164920.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Copy files from source to destination
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Copying files from source -> dest (excluding .git and node_modules). This may take a while..."
+Copying files from source -> dest (excluding .git and node_modules). This may take a while...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $robocopyArgs2 = @($SourceFolder, $dest, "/E", "/COPY:DAT", "/R:2", "/W:1", "/XD", ".git", "node_modules", "transfer_backups", "/NFL", "/NDL")
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $rc2 = Start-Process -FilePath "robocopy" -ArgumentList $robocopyArgs2 -NoNewWindow -Wait -PassThru
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "robocopy finished with exit code $($rc2.ExitCode)."
+robocopy finished with exit code 1.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Show git status of changes (un-staged)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Files changed (un-staged) preview (first 200 entries):"
+Files changed (un-staged) preview (first 200 entries):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git status --porcelain | Select-Object -First 200 | ForEach-Object { Write-Host $_ }
+AA .env
+AA .eslintrc.json
+AA .gitignore
+A  APP_UPDATE_INSTRUCTIONS.txt
+A  Admin.js
+A  Admin.jsx
+A  AdminDashboard.jsx
+A  AgExplorer.jsx
+A  AgMainPage.jsx
+A  AgMarketplace.jsx
+A  AgentDashboard.jsx
+A  AgentRegistration.jsx
+A  Agriculture.jsx
+A  Analytics.jsx
+A  App.js
+A  AuditDNAEnvAI.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AG_CATALOG_EXPANSION_PLAN.txt
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AI_SOUND_FIX_INSTRUCTIONS.txt
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AgGerminationModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AgScienceDashboard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AgScienceDashboard_backup.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AlcoholAnalysis.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AlcoholAnalysisModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.js.backup
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.js.backup_20251028_105119
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.js.corrupted.backup
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.jsx.backup.20251026-163507
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.jsx.backup.20251027_130145
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/App.test.emergency.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AreaConverter.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AuditDNAEnvAI.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AuditDNAEnvAI.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AuditDNAEnvAI.jsx.backup.20251027_120039
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AuditDNAEnvAI_broken.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/AuditDNAHeader.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/BillingComponent.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/CLEAN_AI_SOUND_FIX.txt
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/CRMAnalyticsDashboard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/ContactCardComponent.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/Dashboard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/EnginePerformanceModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/EnvironmentalAnalyzer.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/EpicProgressSteps.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/FieldConditionsLogger.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/FileUploadComponent.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/FuelOilAnalysis.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/FuelOilAnalysisModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/HomePage.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/HomePage_Fixed.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/HomePage_Fixed_NO_PURPLE.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/LabDashboard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/LanguageContext.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/LanguageToggle.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/Loader.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/Marketplace.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/MicroFrontendLoader.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/QRCodeComponent.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/QRCodeGenerator.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/ResultsPortal.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/SearchableTestSelector.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/SoilAnalysis.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/SoilAnalysisModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/TestingServices.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/TestingServicesHub.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/TestingServicesHub.jsx.BROKEN
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/Traceability.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/TraceabilityModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/TraceabilityTracker.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/UploadCenter.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/WaterTech.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/WaterTechAdvanced.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/WaterTechModuleAdvanced.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/WaterTechModuleAdvanced.jsx.BROKEN_BACKUP
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/agCategories.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/agGerminationCatalog.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/agTestCatalog.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/agTestCatalog_backup.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/agTestLoader.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/aiAnalysisEngine.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/alcoholTestCatalog.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/api.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/api/leads.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/audioSystem.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/colors.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Accordion.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Accordion.jsx.bak-20250821191546
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Accordion.jsx.bak-20250821192136
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AdminPanel.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AdminQrButton.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgMArketplace.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgentRegistration.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgentRegistrationCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgentRegistrationForm.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgreementViewer.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgreementsAccordion.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AgrimaxxPanel.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/App.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/App.tsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AppHeader.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AppraisalServicesCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditCatalogPage.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditComplianceMain.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditDNACatalog.tsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditDNAPlatformOverview.tsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditDNAWaterSolutionTechnology.tsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditFrameworkCard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/AuditProcessInfo.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CFPBNotifier.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CFPBPanel.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CartSummary.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CaseDetail.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Cases.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CategoriesAccordion.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CertBadge.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/CommoditiesCard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ComplianceCard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ContactCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Dashboard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/DashboardCard.css
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/DashboardCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/DealRoomModal.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/DevNav.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/DocumentUploader.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/DynamicAuditModule.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/EscrowCard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/EscrowFeatureCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Extract-Lenders.ps1
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/FacialRecognition.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/FileUpload.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/FileUpload.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Footer.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Footer.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/FooterLegalLink.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/GrowerProfileModal.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/HeaderBar.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/HomePage.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/IDUploadForm.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Layout.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/LegalQuestionnaireCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Loading.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/LoanMatchForm.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/LoanMatchForm.jsx.bak.20250821145045
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/LoanMatchForm.jsx.bak.20250821145642
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/LoanMatchForm.jsx.bak.20250821145822
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/LoanMatchForm.jsx.bak.20250821150525
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MarketsCard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MegaNavbar.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MexicoRealEstate.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MexicoRealEstateAccordion.sx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MexicoRefiCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MortgageCard.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MortgageLoanAuditService.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MortgageQuickSearch.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MortgageSearchEngine.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/MortgageTabUS.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/NMLSPanel.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Navbar.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/OCRUpload.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/OwnerBuyerForm.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/PriceChart.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ProducePrices.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ProduceQuickSearch.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ProduceTrendsAll.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/PropertyListings.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/PropertyProfileCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/PropertySearch.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ProtectedRoute.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/RateTicker.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ReferralPartnerCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/RequireLogin.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/RiskBadge.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Scanner.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/SearchEngines.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServiceAndCompliancePage.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServiceCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServiceDrawer.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServiceItem.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServiceRequestCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServiceStart.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Services.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServicesAccordion.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServicesAndCompliancePage.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServicesComplianceAccordion.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServicesPage.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ServicesTab.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ShortForm1003Sidebar.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/ShortLoanApp.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Sidebar.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Sidebar.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/SidebarNav.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/Skeleton.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/SoundToggle.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/SplashScreen.js
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/StatementOfIdentityForm.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/StockTicker.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/SupplierIntelligenceCard.jsx
+A  BACKUP_BEFORE_FINAL_FIX_20251028_120350/components/TabsBar.jsx
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Stage and commit only if there are changes
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Staging all changes..."
+Staging all changes...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git add -A
+warning: in the working copy of 'frontend/frontend/transfer_transcript_20251029-164859.txt', LF will be replaced by CRLF
+ the next time Git touches it
+warning: in the working copy of 'frontend/src/pages/AgMainPage.jsx', LF will be replaced by CRLF the next time Git touch
+es it
+warning: in the working copy of 'frontend/src/pages/AgMarketplaceSearchPage.jsx', LF will be replaced by CRLF the next t
+ime Git touches it
+warning: in the working copy of 'frontend/src/pages/agpage.jsx', LF will be replaced by CRLF the next time Git touches i
+t
+warning: in the working copy of 'frontend/transfer_transcript_20251029-164859.txt', LF will be replaced by CRLF the next
+ time Git touches it
+warning: in the working copy of 'transfer_transcript_20251029-164859.txt', LF will be replaced by CRLF the next time Git
+ touches it
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Attempt commit
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $commitMsg = "chore(transfer): copy supreme frontend files into frontend (backup: $backup)"

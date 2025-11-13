@@ -1,0 +1,7 @@
+// ✅ Clean PostCSS Config for Tailwind
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};

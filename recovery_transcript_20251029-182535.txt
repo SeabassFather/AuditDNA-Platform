@@ -1,0 +1,1309 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20251029182536
+Username: MFGIINC\Mexausa
+RunAs User: MFGIINC\Mexausa
+Configuration Name: 
+Machine: MFGIINC (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 4304
+PSVersion: 5.1.26100.6725
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6725
+BuildVersion: 10.0.26100.6725
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is .\recovery_transcript_20251029-182535.txt
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`nREPO: $(Get-Location)"
+
+REPO: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Timestamp: $ts"
+Timestamp: 20251029-182535
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 0) Create a full zip backup of current working tree (safe)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $zip = ".\worktree_backup_$ts.zip"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`nCreating zip backup of current working tree -> $zip (may take a moment)..."
+
+Creating zip backup of current working tree -> .\worktree_backup_20251029-182535.zip (may take a moment)...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Try {
+  Compress-Archive -Path * -DestinationPath $zip -Force -ErrorAction Stop
+  Write-Host "Backup created: $zip"
+} Catch {
+  Write-Host "WARN: Compress-Archive failed: $($_.Exception.Message). Continuing (backup skipped)."
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(Compress-Archive): "The path 'C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\et HEAD .' either does not exist or is not a valid file system path."
+WARN: Compress-Archive failed: The path 'C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\et HEAD .' either does not exist or is not a valid file system path.. Continuing (backup skipped).
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 1) Show branch & basic git status
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> GIT BRANCH & STATUS"
+
+==> GIT BRANCH & STATUS
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git rev-parse --abbrev-ref HEAD 2>$null
+fix-nested-frontend-20251029-171531
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git status --porcelain
+ M .env
+ M .eslintrc.json
+ M .gitignore
+ M MexicoLoanMatcher.jsx
+ M README.md
+ D docs
+ M netlify.toml
+ M package-lock.json
+ M postcss.config.js
+ M public/index.html
+ M src/App.css
+ M src/App.js
+ M src/App.jsx
+ M src/api.js
+ M src/components/AgentRegistrationCard.jsx
+ M src/components/AgentRegistrationForm.jsx
+ M src/components/App.js
+ M src/components/AppraisalServicesCard.jsx
+ M src/components/AuditProcessInfo.jsx
+ M src/components/ContactCard.jsx
+ M src/components/Dashboard.js
+ M src/components/DashboardCard.css
+ M src/components/DocumentUploader.jsx
+ M src/components/DynamicAuditModule.jsx
+ M src/components/FacialRecognition.jsx
+ M src/components/Footer.js
+ M src/components/Footer.jsx
+ M src/components/GrowerProfileModal.jsx
+ M src/components/LegalQuestionnaireCard.jsx
+ M src/components/MexicoRealEstate.jsx
+ M src/components/MexicoRefiCard.jsx
+ M src/components/MortgageTabUS.jsx
+ M src/components/OwnerBuyerForm.jsx
+ M src/components/PropertyListings.jsx
+ M src/components/PropertySearch.jsx
+ M src/components/RateTicker.jsx
+ M src/components/ReferralPartnerCard.jsx
+ M src/components/Scanner.jsx
+ M src/components/SearchEngines.js
+ M src/components/ServiceDrawer.jsx
+ M src/components/ServiceRequestCard.jsx
+ M src/components/Services.jsx
+ M src/components/ServicesAndCompliancePage.jsx
+ M src/components/ServicesComplianceAccordion.jsx
+ M src/components/ServicesTab.js
+ M src/components/ShortForm1003Sidebar.js
+ M src/components/SupplierIntelligenceCard.jsx
+ M src/components/TopRibbonTicker.jsx
+ M src/components/agricultureServices.js
+ M src/components/mortgageServices.js
+ M src/components/produceTop100.js
+ M src/components/servciesData.js
+ M src/components/serviceData.js
+ M src/components/serviceDetails.js
+ M src/config/db.js
+ M src/data/AuditDNAServiceCatalog.jsx
+ M src/data/Services.js
+ M src/data/agriTests.json
+ M src/data/cropsTaxonomy.js
+ M src/data/growerDatabase.js
+ M src/data/services.json
+ M src/data/services/agricultureServices.js
+ M src/data/services/mortgageServices.js
+ M src/data/services/serviceDetails.js
+ M src/data/services/servicesData.js
+ M src/data/servicesExpanded.json
+ M src/data/servicesMegaCatalog.json
+ M src/data/spartan_services.json
+ M src/data/waterSoilTests.json
+ M src/data/waterSources.json
+ M src/features/ag/AgMarket.jsx.bak.20250821145640
+ M src/features/ag/AgMarket.jsx.bak.20250821145823
+ M src/features/ag/AgMarket.jsx.bak.20250821150410
+ M src/features/ag/AgMarket.jsx.bak.20250821150525
+ M src/features/ag/AgMarket.jsx.bak.20250821150655
+ M src/features/ag/AgMarket.jsx.bak.20250821150925
+ M src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+ M src/features/docusign/DocuSignPanel.jsx
+ M src/features/files/FileUpload.jsx
+ M src/i18n/I18nProvider.jsx
+ M src/i18n/useI18n.js
+ M src/index.css
+ M src/index.js
+ M src/lib/Uploads.js
+ M src/lib/api.js
+ M src/lib/services/agriculture.json
+ M src/lib/services/compliance.json
+ M src/pages/Admin.js
+ M src/pages/Admin.jsx
+ M src/pages/AdminDashboard.jsx
+ M src/pages/AgExplorer.jsx
+ M src/pages/AgMarketSearchPage.jsx
+ M src/pages/AgMarketplace.jsx
+ M src/pages/AgentDashboard.jsx
+ M src/pages/AgentRegistration.jsx
+ M src/pages/AuditCatalogPage.jsx
+ M src/pages/AuditDNAApp.jsx
+ M src/pages/AuditDNAPage.jsx
+ M src/pages/AuditDNAServiceCatalog.jsx
+ M src/pages/CasesPage.jsx
+ M src/pages/CommissionAgreement.jsx
+ M src/pages/Compliance.jsx
+ M src/pages/ConstructionProjectCard.jsx
+ M src/pages/ContactCard.jsx
+ M src/pages/Dashboard.jsx
+ M src/pages/DocumentUploader.jsx
+ M src/pages/Factoring.jsx
+ M src/pages/FileUploads.jsx
+ M src/pages/FiveVerificationEngines.jsx
+ M src/pages/Home.jsx
+ M src/pages/MexicoLoans.jsx
+ M src/pages/MexicoRefiCard.jsx
+ M src/pages/Mortgage.jsx
+ M src/pages/MortgageSearchEngine.jsx
+ M src/pages/MortgageTabMexico.jsx
+ M src/pages/MortgageTabRealEstate.jsx
+ M src/pages/MortgageTabRealEstate.jsx.backup
+ M src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+ M src/pages/MortgageTabUS.jsx
+ M src/pages/NotificationCenter.jsx
+ M src/pages/OwnerBuyerForm.jsx
+ M src/pages/OwnerContactCard.jsx
+ M src/pages/PitchDeckPage.jsx
+ M src/pages/PropertySearch.jsx
+ M src/pages/PropertyUploadForm.jsx
+ M src/pages/Search.jsx
+ M src/pages/ServiceCategoryDetail.jsx
+ M src/pages/ServiceDetail.jsx
+ M src/pages/Services.jsx.backup
+ M src/pages/ServicesExplorer.jsx
+ M src/pages/Ticker.js
+ M src/pages/TradeFinance.jsx
+ M src/pages/TradePortal.js
+ M src/pages/USDA.jsx
+ M src/pages/USDA.jsx.bak.20250929-173344
+ M src/pages/USDAGrowerSearchEngine.jsx
+ M src/pages/USDAMarketplace.jsx
+ M src/pages/WaterTech.jsx
+ M src/pages/footer.jsx
+ M src/pages/marketpricespage.jsx
+ M src/pages/navbar.jsx
+ D src/pages/netlify.toml
+ M src/pages/producemarketpie.jsx
+ M src/pages/producepricechart.jsx
+ M src/pages/producetrendpage.jsx
+ M src/pages/producetrendsall.jsx
+ M src/pages/searchenginessection.jsx
+ M src/pages/servicepage.jsx
+ M src/pages/topnav.jsx
+ M src/services/services.json
+ M src/services/waterService.js
+ M src/utils/agMarketplaceAPI.js
+ M src/utils/aiMatchmaking.js
+ M src/utils/api.js
+ M src/utils/auth.js
+ M src/utils/tradeFinanceAPI.js
+ M tailwind.config.js
+?? APP_UPDATE_INSTRUCTIONS.txt
+?? Admin.js
+?? Admin.jsx
+?? AdminDashboard.jsx
+?? AgExplorer.jsx
+?? AgMainPage.jsx
+?? AgMarketplace.jsx
+?? AgentDashboard.jsx
+?? AgentRegistration.jsx
+?? Agriculture.jsx
+?? Analytics.jsx
+?? App.js
+?? AuditDNAEnvAI.jsx
+?? BACKUP_BEFORE_GLASS_20251027_180440/
+?? COMPLETE_SYSTEM_BACKUP_20251028_130320/
+?? Compliance.jsx
+?? EMERGENCY_BACKUP_20251027_181959/
+?? FEATURES.txt
+?? FINAL_BACKUP_20251028_120912/
+?? FORCE_REBUILD.bat
+?? FuelOilAnalysis.jsx
+?? InvoiceFinancing.jsx
+?? MexicoOps.jsx
+?? NUCLEAR_RESET.bat
+?? QUICK_START.txt
+?? RealEstate.jsx
+?? SEABASSFATHER_DADDIES_FILE_1_WATER_SOIL_AG.txt
+?? START_CLEAN.bat
+?? TESTING_API_ROUTES.js
+?? TESTING_SERVICES_COMPLETE.txt
+?? TESTING_SERVICES_PRICING.txt
+?? Tariffs.jsx
+?? TradeFinance.jsx
+?? USDA.jsx
+?? WATER_SOIL_MODULES.txt
+?? apps/
+?? autoscaffold-watertech.ps1
+?? conflicted_files_list.txt
+?? copy_frontend_to_final.ps1
+?? create_a_b_c.ps1
+?? create_and_push_powerpony.ps1
+?? create_pki_stripe.ps1
+?? create_powerpony_1_6.ps1
+?? create_powerpony_all.ps1
+?? create_powerpony_minimal.ps1
+?? create_shortcuts.ps1
+?? docs~HEAD
+?? "e --abbrev-ref HEAD)"
+?? "e --abbrev-ref HEAD) 2\357\200\276&1 \357\201\274 Write-Host"
+?? "et HEAD ."
+?? fix_nested_frontend_copy.ps1
+?? fix_nested_transcript_20251029-171121.txt
+?? fix_progress_20251029-174858.txt
+?? frontend/BACKUP_BEFORE_GLASS_20251027_180440/components/supplier-intel-standalone.html
+?? frontend/COMPLETE_SYSTEM_BACKUP_20251028_130320/components/supplier-intel-standalone.html
+?? frontend/EMERGENCY_BACKUP_20251027_181959/components/supplier-intel-standalone.html
+?? frontend/FINAL_BACKUP_20251028_120912/components/supplier-intel-standalone.html
+?? frontend/apps/agriculture-app/public/index.html
+?? frontend/apps/financial-app/public/index.html
+?? frontend/apps/realestate-app/public/index.html
+?? frontend/index.html
+?? frontend/public/catalog-preview.html
+?? frontend/public/index.html
+?? frontend/public/superman-catalog-demo.html
+?? frontend/src/components/supplier-intel-standalone.html
+?? frontend/src/public/index.html
+?? frontend_html_check.ps1
+?? kill_port_3000.ps1
+?? package.json.broken_20251029-181146
+?? public/favicon.ico
+?? public/logo192.png
+?? public/logo512.png
+?? public/manifest.json
+?? public/robots.txt
+?? recovery_transcript_20251029-182535.txt
+?? run_auditdna_backend.ps1
+?? run_auditdna_stack.bat
+?? save_auditdna_ui.ps1
+?? scripts/inspect_and_protect.ps1
+?? session_transcript_20251029-182228.txt
+?? src/AGSciencesModule.jsx
+?? src/AGSciencesModule_OLD_BACKUP.jsx
+?? src/AG_CATALOG_EXPANSION_PLAN.txt
+?? src/AI_SOUND_FIX_INSTRUCTIONS.txt
+?? src/AgGerminationModule.jsx
+?? src/AgScienceDashboard.jsx
+?? src/AgScienceDashboard_backup.jsx
+?? src/AlcoholAnalysis.css
+?? src/AlcoholAnalysisModule.jsx
+?? src/AlcoholTestingModule.jsx
+?? src/App.js.backup
+?? src/App.js.backup_20251028_105119
+?? src/App.js.corrupted.backup
+?? src/App.jsx.backup.20251026-163507
+?? src/App.jsx.backup.20251027_130145
+?? src/App.test.emergency.jsx
+?? src/AreaConverter.jsx
+?? src/AuditDNAEnvAI.css
+?? src/AuditDNAEnvAI.jsx
+?? src/AuditDNAEnvAI.jsx.backup.20251027_120039
+?? src/AuditDNAEnvAI_broken.jsx
+?? src/AuditDNAHeader.jsx
+?? src/BillingComponent.jsx
+?? src/CLEAN_AI_SOUND_FIX.txt
+?? src/CRMAnalyticsDashboard.jsx
+?? src/CartContext.jsx
+?? src/CartPage.jsx
+?? src/CheckoutPage.jsx
+?? src/ContactCardComponent.jsx
+?? src/ContactPage.jsx
+?? src/Dashboard.jsx
+?? src/EnginePerformanceModule.jsx
+?? src/EnvironmentalAnalyzer.jsx
+?? src/EpicProgressSteps.jsx
+?? src/ExportUtils.jsx
+?? src/FieldConditionsLogger.jsx
+?? src/FileUploadComponent.jsx
+?? src/Footer.jsx
+?? src/FuelOilAnalysis.css
+?? src/FuelOilAnalysisModule.jsx
+?? src/FuelTestingModule.jsx
+?? src/HomePage.jsx
+?? src/HomePage_Fixed.jsx
+?? src/HomePage_Fixed_NO_PURPLE.jsx
+?? src/LabDashboard.jsx
+?? src/LanguageContext.jsx
+?? src/LanguageToggle.jsx
+?? src/Loader.jsx
+?? src/Marketplace.jsx
+?? src/MicroFrontendLoader.jsx
+?? src/Navbar.jsx
+?? src/OrdersPage.jsx
+?? src/ProduceIntelligenceModule.jsx
+?? src/ProduceScienceVerification.jsx
+?? src/QRCodeComponent.jsx
+?? src/QRCodeGenerator.jsx
+?? src/ResultsPortal.jsx
+?? src/SearchableTestSelector.jsx
+?? src/SoilAnalysis.css
+?? src/SoilAnalysisModule.jsx
+?? src/TestingServices.css
+?? src/TestingServicesHub.jsx
+?? src/TestingServicesHub.jsx.BROKEN
+?? src/Traceability.jsx
+?? src/TraceabilityModule.jsx
+?? src/TraceabilityTracker.jsx
+?? src/UploadCenter.jsx
+?? src/WaterTech.css
+?? src/WaterTechAdvanced.css
+?? src/WaterTechModuleAdvanced.jsx
+?? src/WaterTechModuleAdvanced.jsx.BROKEN_BACKUP
+?? src/agCategories.js
+?? src/agGerminationCatalog.js
+?? src/agTestCatalog.js
+?? src/agTestCatalog_backup.js
+?? src/agTestLoader.js
+?? src/aiAnalysisEngine.js
+?? src/alcoholTestCatalog.js
+?? src/audioSystem.js
+?? src/colors.css
+?? src/components/AttestationForm.jsx
+?? src/components/DashboardCard.jsx
+?? src/components/GrowerDashboard.jsx
+?? src/components/Loading.jsx
+?? src/components/MegaNavbar.jsx
+?? src/components/RREADME.md
+?? src/components/UploadWidget.jsx
+?? src/components/VerificationPortal.jsx
+?? src/components/WaterSearch.jsx
+?? src/components/usda/
+?? src/config/features.js
+?? src/engineTestCatalog.js
+?? src/fuelOilTestCatalog.js
+?? src/gasTestCatalog.js
+?? src/glassmorphism.css
+?? src/modules/
+?? src/oilTestCatalog.js
+?? src/pages/AgentExplorer.jsx
+?? src/pages/Agriculture.jsx
+?? src/pages/Analytics.jsx
+?? src/pages/AuditDNAUniverseMap.jsx
+?? src/pages/FinancialServices.jsx
+?? src/pages/FrozenAvocadoGuacamole.jsx
+?? src/pages/InvoiceFinancing.jsx
+?? src/pages/Megadashboard.jsx
+?? src/pages/MexicoLoanMatcher.jsx
+?? src/pages/MexicoOps.jsx
+?? src/pages/RealEstate.jsx
+?? src/pages/Tariffs.jsx
+?? src/pages/Traceabilitymodule.jsx
+?? src/simple-theme.css
+?? src/soilTestCatalog.js
+?? src/src/
+?? src/styles/auditdna-theme.css
+?? src/styles/tailwind.config.js
+?? src/translations.js
+?? src/waterTestCatalog.js
+?? "t \357\200\242`n=== STAGED FILES ===\357\200\242"
+?? "t-Path .gitignore)) { New-Item -ItemType File -Path .gitignore -Force \357\201\274 Out-Null }"
+?? "ted frontend copy (moved to transfer_backups)\357\200\242"
+?? "ted frontend copy (moved to transfer_backups)\357\200\242 2\357\200\276&1 \357\201\274 Write-Host"
+?? transfer_transcript_20251029-164859.txt
+?? watertech-traceability-scaffold.ps1
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 2) Find conflicted files
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Conflicted files (git diff --name-only --diff-filter=U):"
+
+==> Conflicted files (git diff --name-only --diff-filter=U):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $conflicted = git diff --name-only --diff-filter=U
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if (-not $conflicted -or $conflicted.Count -eq 0) {
+  Write-Host "No conflicted files found."
+} else {
+  $conflicted | ForEach-Object { Write-Host "  $_" }
+}
+No conflicted files found.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 3) If conflicts exist, back them up (preserving directory structure) and accept OURS
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($conflicted -and $conflicted.Count -gt 0) {
+  $backupDir = ".\conflict_backup_full_$ts"
+  New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+  Write-Host "`nBacking up conflicted files (preserving paths) to: $backupDir"
+  foreach ($f in $conflicted) {
+    if (Test-Path $f) {
+      $destPath = Join-Path $backupDir $f
+      $destDir = Split-Path $destPath -Parent
+      if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
+      Copy-Item -Path $f -Destination $destPath -Force
+      Write-Host "  backed up: $f -> $destPath"
+    } else {
+      Write-Host "  skip (not found): $f"
+    }
+    # accept OURS and stage
+    Write-Host "  accepting OURS for: $f"
+    git checkout --ours -- "$f" 2>$null
+    git add "$f" 2>$null
+  }
+  Write-Host "All conflicted files backed up and resolved by accepting OURS (staged)."
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 4) Ensure package.json is sane: if it contains merge markers and _backup/package.json exists, restore it
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Try {
+  if (Test-Path package.json) {
+    $hasMarkers = Select-String -Path package.json -Pattern '<<<<<|=====|>>>>>' -SimpleMatch -Quiet -ErrorAction SilentlyContinue
+    if ($hasMarkers) {
+      if (Test-Path "_backup\package.json") {
+        Copy-Item -Path "_backup\package.json" -Destination "package.json" -Force
+        git add package.json
+        Write-Host "Replaced package.json with _backup\\package.json and staged it."
+      } else {
+        Write-Host "package.json contains merge markers and no _backup is available. Manual edit required."
+      }
+    } else {
+      Write-Host "package.json OK (no merge markers)."
+    }
+  } else {
+    Write-Host "No package.json at repo root."
+  }
+} Catch {
+  Write-Host "WARN: Error checking package.json: $($_.Exception.Message)"
+}
+package.json OK (no merge markers).
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 5) Unstage HTML files that commonly block the hook (safe)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Unstaging common index.html files that can block pre-commit hooks"
+
+==> Unstaging common index.html files that can block pre-commit hooks
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $htmlCandidates = @("frontend/index.html","frontend/public/index.html","public/index.html","index.html")
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> foreach ($h in $htmlCandidates) {
+  if (Test-Path $h) {
+    git restore --staged "$h" 2>$null
+    git reset HEAD -- "$h" 2>$null
+    Write-Host "  attempted unstage: $h"
+  }
+}
+git : error: pathspec 'frontend/index.html' did not match any file(s) known to git
+At line:3 char:5
++     git restore --staged "$h" 2>$null
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error: pathspec...s) known to git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Unstaged changes after reset:
+M       .env
+M       .eslintrc.json
+M       .gitignore
+M       MexicoLoanMatcher.jsx
+M       README.md
+T       docs
+M       netlify.toml
+M       package-lock.json
+M       postcss.config.js
+M       public/index.html
+M       src/App.css
+M       src/App.js
+M       src/App.jsx
+M       src/api.js
+M       src/components/AgentRegistrationCard.jsx
+M       src/components/AgentRegistrationForm.jsx
+M       src/components/App.js
+M       src/components/AppraisalServicesCard.jsx
+M       src/components/AuditProcessInfo.jsx
+M       src/components/ContactCard.jsx
+M       src/components/Dashboard.js
+M       src/components/DashboardCard.css
+M       src/components/DocumentUploader.jsx
+M       src/components/DynamicAuditModule.jsx
+M       src/components/FacialRecognition.jsx
+M       src/components/Footer.js
+M       src/components/Footer.jsx
+M       src/components/GrowerProfileModal.jsx
+M       src/components/LegalQuestionnaireCard.jsx
+M       src/components/MexicoRealEstate.jsx
+M       src/components/MexicoRefiCard.jsx
+M       src/components/MortgageTabUS.jsx
+M       src/components/OwnerBuyerForm.jsx
+M       src/components/PropertyListings.jsx
+M       src/components/PropertySearch.jsx
+M       src/components/RateTicker.jsx
+M       src/components/ReferralPartnerCard.jsx
+M       src/components/Scanner.jsx
+M       src/components/SearchEngines.js
+M       src/components/ServiceDrawer.jsx
+M       src/components/ServiceRequestCard.jsx
+M       src/components/Services.jsx
+M       src/components/ServicesAndCompliancePage.jsx
+M       src/components/ServicesComplianceAccordion.jsx
+M       src/components/ServicesTab.js
+M       src/components/ShortForm1003Sidebar.js
+M       src/components/SupplierIntelligenceCard.jsx
+M       src/components/TopRibbonTicker.jsx
+M       src/components/agricultureServices.js
+M       src/components/mortgageServices.js
+M       src/components/produceTop100.js
+M       src/components/servciesData.js
+M       src/components/serviceData.js
+M       src/components/serviceDetails.js
+M       src/config/db.js
+M       src/data/AuditDNAServiceCatalog.jsx
+M       src/data/Services.js
+M       src/data/agriTests.json
+M       src/data/cropsTaxonomy.js
+M       src/data/growerDatabase.js
+M       src/data/services.json
+M       src/data/services/agricultureServices.js
+M       src/data/services/mortgageServices.js
+M       src/data/services/serviceDetails.js
+M       src/data/services/servicesData.js
+M       src/data/servicesExpanded.json
+M       src/data/servicesMegaCatalog.json
+M       src/data/spartan_services.json
+M       src/data/waterSoilTests.json
+M       src/data/waterSources.json
+M       src/features/ag/AgMarket.jsx.bak.20250821145640
+M       src/features/ag/AgMarket.jsx.bak.20250821145823
+M       src/features/ag/AgMarket.jsx.bak.20250821150410
+M       src/features/ag/AgMarket.jsx.bak.20250821150525
+M       src/features/ag/AgMarket.jsx.bak.20250821150655
+M       src/features/ag/AgMarket.jsx.bak.20250821150925
+M       src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+M       src/features/docusign/DocuSignPanel.jsx
+M       src/features/files/FileUpload.jsx
+M       src/i18n/I18nProvider.jsx
+M       src/i18n/useI18n.js
+M       src/index.css
+M       src/index.js
+M       src/lib/Uploads.js
+M       src/lib/api.js
+M       src/lib/services/agriculture.json
+M       src/lib/services/compliance.json
+M       src/pages/Admin.js
+M       src/pages/Admin.jsx
+M       src/pages/AdminDashboard.jsx
+M       src/pages/AgExplorer.jsx
+M       src/pages/AgMarketSearchPage.jsx
+M       src/pages/AgMarketplace.jsx
+M       src/pages/AgentDashboard.jsx
+M       src/pages/AgentRegistration.jsx
+M       src/pages/AuditCatalogPage.jsx
+M       src/pages/AuditDNAApp.jsx
+M       src/pages/AuditDNAPage.jsx
+M       src/pages/AuditDNAServiceCatalog.jsx
+M       src/pages/CasesPage.jsx
+M       src/pages/CommissionAgreement.jsx
+M       src/pages/Compliance.jsx
+M       src/pages/ConstructionProjectCard.jsx
+M       src/pages/ContactCard.jsx
+M       src/pages/Dashboard.jsx
+M       src/pages/DocumentUploader.jsx
+M       src/pages/Factoring.jsx
+M       src/pages/FileUploads.jsx
+M       src/pages/FiveVerificationEngines.jsx
+M       src/pages/Home.jsx
+M       src/pages/MexicoLoans.jsx
+M       src/pages/MexicoRefiCard.jsx
+M       src/pages/Mortgage.jsx
+M       src/pages/MortgageSearchEngine.jsx
+M       src/pages/MortgageTabMexico.jsx
+M       src/pages/MortgageTabRealEstate.jsx
+M       src/pages/MortgageTabRealEstate.jsx.backup
+M       src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+M       src/pages/MortgageTabUS.jsx
+M       src/pages/NotificationCenter.jsx
+M       src/pages/OwnerBuyerForm.jsx
+M       src/pages/OwnerContactCard.jsx
+M       src/pages/PitchDeckPage.jsx
+M       src/pages/PropertySearch.jsx
+M       src/pages/PropertyUploadForm.jsx
+M       src/pages/Search.jsx
+M       src/pages/ServiceCategoryDetail.jsx
+M       src/pages/ServiceDetail.jsx
+M       src/pages/Services.jsx.backup
+M       src/pages/ServicesExplorer.jsx
+M       src/pages/Ticker.js
+M       src/pages/TradeFinance.jsx
+M       src/pages/TradePortal.js
+M       src/pages/USDA.jsx
+M       src/pages/USDA.jsx.bak.20250929-173344
+M       src/pages/USDAGrowerSearchEngine.jsx
+M       src/pages/USDAMarketplace.jsx
+M       src/pages/WaterTech.jsx
+M       src/pages/footer.jsx
+M       src/pages/marketpricespage.jsx
+M       src/pages/navbar.jsx
+D       src/pages/netlify.toml
+M       src/pages/producemarketpie.jsx
+M       src/pages/producepricechart.jsx
+M       src/pages/producetrendpage.jsx
+M       src/pages/producetrendsall.jsx
+M       src/pages/searchenginessection.jsx
+M       src/pages/servicepage.jsx
+M       src/pages/topnav.jsx
+M       src/services/services.json
+M       src/services/waterService.js
+M       src/utils/agMarketplaceAPI.js
+M       src/utils/aiMatchmaking.js
+M       src/utils/api.js
+M       src/utils/auth.js
+M       src/utils/tradeFinanceAPI.js
+M       tailwind.config.js
+  attempted unstage: frontend/index.html
+git : error: pathspec 'frontend/public/index.html' did not match any file(s) known to git
+At line:3 char:5
++     git restore --staged "$h" 2>$null
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error: pathspec...s) known to git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Unstaged changes after reset:
+M       .env
+M       .eslintrc.json
+M       .gitignore
+M       MexicoLoanMatcher.jsx
+M       README.md
+T       docs
+M       netlify.toml
+M       package-lock.json
+M       postcss.config.js
+M       public/index.html
+M       src/App.css
+M       src/App.js
+M       src/App.jsx
+M       src/api.js
+M       src/components/AgentRegistrationCard.jsx
+M       src/components/AgentRegistrationForm.jsx
+M       src/components/App.js
+M       src/components/AppraisalServicesCard.jsx
+M       src/components/AuditProcessInfo.jsx
+M       src/components/ContactCard.jsx
+M       src/components/Dashboard.js
+M       src/components/DashboardCard.css
+M       src/components/DocumentUploader.jsx
+M       src/components/DynamicAuditModule.jsx
+M       src/components/FacialRecognition.jsx
+M       src/components/Footer.js
+M       src/components/Footer.jsx
+M       src/components/GrowerProfileModal.jsx
+M       src/components/LegalQuestionnaireCard.jsx
+M       src/components/MexicoRealEstate.jsx
+M       src/components/MexicoRefiCard.jsx
+M       src/components/MortgageTabUS.jsx
+M       src/components/OwnerBuyerForm.jsx
+M       src/components/PropertyListings.jsx
+M       src/components/PropertySearch.jsx
+M       src/components/RateTicker.jsx
+M       src/components/ReferralPartnerCard.jsx
+M       src/components/Scanner.jsx
+M       src/components/SearchEngines.js
+M       src/components/ServiceDrawer.jsx
+M       src/components/ServiceRequestCard.jsx
+M       src/components/Services.jsx
+M       src/components/ServicesAndCompliancePage.jsx
+M       src/components/ServicesComplianceAccordion.jsx
+M       src/components/ServicesTab.js
+M       src/components/ShortForm1003Sidebar.js
+M       src/components/SupplierIntelligenceCard.jsx
+M       src/components/TopRibbonTicker.jsx
+M       src/components/agricultureServices.js
+M       src/components/mortgageServices.js
+M       src/components/produceTop100.js
+M       src/components/servciesData.js
+M       src/components/serviceData.js
+M       src/components/serviceDetails.js
+M       src/config/db.js
+M       src/data/AuditDNAServiceCatalog.jsx
+M       src/data/Services.js
+M       src/data/agriTests.json
+M       src/data/cropsTaxonomy.js
+M       src/data/growerDatabase.js
+M       src/data/services.json
+M       src/data/services/agricultureServices.js
+M       src/data/services/mortgageServices.js
+M       src/data/services/serviceDetails.js
+M       src/data/services/servicesData.js
+M       src/data/servicesExpanded.json
+M       src/data/servicesMegaCatalog.json
+M       src/data/spartan_services.json
+M       src/data/waterSoilTests.json
+M       src/data/waterSources.json
+M       src/features/ag/AgMarket.jsx.bak.20250821145640
+M       src/features/ag/AgMarket.jsx.bak.20250821145823
+M       src/features/ag/AgMarket.jsx.bak.20250821150410
+M       src/features/ag/AgMarket.jsx.bak.20250821150525
+M       src/features/ag/AgMarket.jsx.bak.20250821150655
+M       src/features/ag/AgMarket.jsx.bak.20250821150925
+M       src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+M       src/features/docusign/DocuSignPanel.jsx
+M       src/features/files/FileUpload.jsx
+M       src/i18n/I18nProvider.jsx
+M       src/i18n/useI18n.js
+M       src/index.css
+M       src/index.js
+M       src/lib/Uploads.js
+M       src/lib/api.js
+M       src/lib/services/agriculture.json
+M       src/lib/services/compliance.json
+M       src/pages/Admin.js
+M       src/pages/Admin.jsx
+M       src/pages/AdminDashboard.jsx
+M       src/pages/AgExplorer.jsx
+M       src/pages/AgMarketSearchPage.jsx
+M       src/pages/AgMarketplace.jsx
+M       src/pages/AgentDashboard.jsx
+M       src/pages/AgentRegistration.jsx
+M       src/pages/AuditCatalogPage.jsx
+M       src/pages/AuditDNAApp.jsx
+M       src/pages/AuditDNAPage.jsx
+M       src/pages/AuditDNAServiceCatalog.jsx
+M       src/pages/CasesPage.jsx
+M       src/pages/CommissionAgreement.jsx
+M       src/pages/Compliance.jsx
+M       src/pages/ConstructionProjectCard.jsx
+M       src/pages/ContactCard.jsx
+M       src/pages/Dashboard.jsx
+M       src/pages/DocumentUploader.jsx
+M       src/pages/Factoring.jsx
+M       src/pages/FileUploads.jsx
+M       src/pages/FiveVerificationEngines.jsx
+M       src/pages/Home.jsx
+M       src/pages/MexicoLoans.jsx
+M       src/pages/MexicoRefiCard.jsx
+M       src/pages/Mortgage.jsx
+M       src/pages/MortgageSearchEngine.jsx
+M       src/pages/MortgageTabMexico.jsx
+M       src/pages/MortgageTabRealEstate.jsx
+M       src/pages/MortgageTabRealEstate.jsx.backup
+M       src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+M       src/pages/MortgageTabUS.jsx
+M       src/pages/NotificationCenter.jsx
+M       src/pages/OwnerBuyerForm.jsx
+M       src/pages/OwnerContactCard.jsx
+M       src/pages/PitchDeckPage.jsx
+M       src/pages/PropertySearch.jsx
+M       src/pages/PropertyUploadForm.jsx
+M       src/pages/Search.jsx
+M       src/pages/ServiceCategoryDetail.jsx
+M       src/pages/ServiceDetail.jsx
+M       src/pages/Services.jsx.backup
+M       src/pages/ServicesExplorer.jsx
+M       src/pages/Ticker.js
+M       src/pages/TradeFinance.jsx
+M       src/pages/TradePortal.js
+M       src/pages/USDA.jsx
+M       src/pages/USDA.jsx.bak.20250929-173344
+M       src/pages/USDAGrowerSearchEngine.jsx
+M       src/pages/USDAMarketplace.jsx
+M       src/pages/WaterTech.jsx
+M       src/pages/footer.jsx
+M       src/pages/marketpricespage.jsx
+M       src/pages/navbar.jsx
+D       src/pages/netlify.toml
+M       src/pages/producemarketpie.jsx
+M       src/pages/producepricechart.jsx
+M       src/pages/producetrendpage.jsx
+M       src/pages/producetrendsall.jsx
+M       src/pages/searchenginessection.jsx
+M       src/pages/servicepage.jsx
+M       src/pages/topnav.jsx
+M       src/services/services.json
+M       src/services/waterService.js
+M       src/utils/agMarketplaceAPI.js
+M       src/utils/aiMatchmaking.js
+M       src/utils/api.js
+M       src/utils/auth.js
+M       src/utils/tradeFinanceAPI.js
+M       tailwind.config.js
+  attempted unstage: frontend/public/index.html
+
+Unstaged changes after reset:
+M       .env
+M       .eslintrc.json
+M       .gitignore
+M       MexicoLoanMatcher.jsx
+M       README.md
+T       docs
+M       netlify.toml
+M       package-lock.json
+M       postcss.config.js
+M       public/index.html
+M       src/App.css
+M       src/App.js
+M       src/App.jsx
+M       src/api.js
+M       src/components/AgentRegistrationCard.jsx
+M       src/components/AgentRegistrationForm.jsx
+M       src/components/App.js
+M       src/components/AppraisalServicesCard.jsx
+M       src/components/AuditProcessInfo.jsx
+M       src/components/ContactCard.jsx
+M       src/components/Dashboard.js
+M       src/components/DashboardCard.css
+M       src/components/DocumentUploader.jsx
+M       src/components/DynamicAuditModule.jsx
+M       src/components/FacialRecognition.jsx
+M       src/components/Footer.js
+M       src/components/Footer.jsx
+M       src/components/GrowerProfileModal.jsx
+M       src/components/LegalQuestionnaireCard.jsx
+M       src/components/MexicoRealEstate.jsx
+M       src/components/MexicoRefiCard.jsx
+M       src/components/MortgageTabUS.jsx
+M       src/components/OwnerBuyerForm.jsx
+M       src/components/PropertyListings.jsx
+M       src/components/PropertySearch.jsx
+M       src/components/RateTicker.jsx
+M       src/components/ReferralPartnerCard.jsx
+M       src/components/Scanner.jsx
+M       src/components/SearchEngines.js
+M       src/components/ServiceDrawer.jsx
+M       src/components/ServiceRequestCard.jsx
+M       src/components/Services.jsx
+M       src/components/ServicesAndCompliancePage.jsx
+M       src/components/ServicesComplianceAccordion.jsx
+M       src/components/ServicesTab.js
+M       src/components/ShortForm1003Sidebar.js
+M       src/components/SupplierIntelligenceCard.jsx
+M       src/components/TopRibbonTicker.jsx
+M       src/components/agricultureServices.js
+M       src/components/mortgageServices.js
+M       src/components/produceTop100.js
+M       src/components/servciesData.js
+M       src/components/serviceData.js
+M       src/components/serviceDetails.js
+M       src/config/db.js
+M       src/data/AuditDNAServiceCatalog.jsx
+M       src/data/Services.js
+M       src/data/agriTests.json
+M       src/data/cropsTaxonomy.js
+M       src/data/growerDatabase.js
+M       src/data/services.json
+M       src/data/services/agricultureServices.js
+M       src/data/services/mortgageServices.js
+M       src/data/services/serviceDetails.js
+M       src/data/services/servicesData.js
+M       src/data/servicesExpanded.json
+M       src/data/servicesMegaCatalog.json
+M       src/data/spartan_services.json
+M       src/data/waterSoilTests.json
+M       src/data/waterSources.json
+M       src/features/ag/AgMarket.jsx.bak.20250821145640
+M       src/features/ag/AgMarket.jsx.bak.20250821145823
+M       src/features/ag/AgMarket.jsx.bak.20250821150410
+M       src/features/ag/AgMarket.jsx.bak.20250821150525
+M       src/features/ag/AgMarket.jsx.bak.20250821150655
+M       src/features/ag/AgMarket.jsx.bak.20250821150925
+M       src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+M       src/features/docusign/DocuSignPanel.jsx
+M       src/features/files/FileUpload.jsx
+M       src/i18n/I18nProvider.jsx
+M       src/i18n/useI18n.js
+M       src/index.css
+M       src/index.js
+M       src/lib/Uploads.js
+M       src/lib/api.js
+M       src/lib/services/agriculture.json
+M       src/lib/services/compliance.json
+M       src/pages/Admin.js
+M       src/pages/Admin.jsx
+M       src/pages/AdminDashboard.jsx
+M       src/pages/AgExplorer.jsx
+M       src/pages/AgMarketSearchPage.jsx
+M       src/pages/AgMarketplace.jsx
+M       src/pages/AgentDashboard.jsx
+M       src/pages/AgentRegistration.jsx
+M       src/pages/AuditCatalogPage.jsx
+M       src/pages/AuditDNAApp.jsx
+M       src/pages/AuditDNAPage.jsx
+M       src/pages/AuditDNAServiceCatalog.jsx
+M       src/pages/CasesPage.jsx
+M       src/pages/CommissionAgreement.jsx
+M       src/pages/Compliance.jsx
+M       src/pages/ConstructionProjectCard.jsx
+M       src/pages/ContactCard.jsx
+M       src/pages/Dashboard.jsx
+M       src/pages/DocumentUploader.jsx
+M       src/pages/Factoring.jsx
+M       src/pages/FileUploads.jsx
+M       src/pages/FiveVerificationEngines.jsx
+M       src/pages/Home.jsx
+M       src/pages/MexicoLoans.jsx
+M       src/pages/MexicoRefiCard.jsx
+M       src/pages/Mortgage.jsx
+M       src/pages/MortgageSearchEngine.jsx
+M       src/pages/MortgageTabMexico.jsx
+M       src/pages/MortgageTabRealEstate.jsx
+M       src/pages/MortgageTabRealEstate.jsx.backup
+M       src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+M       src/pages/MortgageTabUS.jsx
+M       src/pages/NotificationCenter.jsx
+M       src/pages/OwnerBuyerForm.jsx
+M       src/pages/OwnerContactCard.jsx
+M       src/pages/PitchDeckPage.jsx
+M       src/pages/PropertySearch.jsx
+M       src/pages/PropertyUploadForm.jsx
+M       src/pages/Search.jsx
+M       src/pages/ServiceCategoryDetail.jsx
+M       src/pages/ServiceDetail.jsx
+M       src/pages/Services.jsx.backup
+M       src/pages/ServicesExplorer.jsx
+M       src/pages/Ticker.js
+M       src/pages/TradeFinance.jsx
+M       src/pages/TradePortal.js
+M       src/pages/USDA.jsx
+M       src/pages/USDA.jsx.bak.20250929-173344
+M       src/pages/USDAGrowerSearchEngine.jsx
+M       src/pages/USDAMarketplace.jsx
+M       src/pages/WaterTech.jsx
+M       src/pages/footer.jsx
+M       src/pages/marketpricespage.jsx
+M       src/pages/navbar.jsx
+D       src/pages/netlify.toml
+M       src/pages/producemarketpie.jsx
+M       src/pages/producepricechart.jsx
+M       src/pages/producetrendpage.jsx
+M       src/pages/producetrendsall.jsx
+M       src/pages/searchenginessection.jsx
+M       src/pages/servicepage.jsx
+M       src/pages/topnav.jsx
+M       src/services/services.json
+M       src/services/waterService.js
+M       src/utils/agMarketplaceAPI.js
+M       src/utils/aiMatchmaking.js
+M       src/utils/api.js
+M       src/utils/auth.js
+M       src/utils/tradeFinanceAPI.js
+M       tailwind.config.js
+  attempted unstage: public/index.html
+
+Unstaged changes after reset:
+M       .env
+M       .eslintrc.json
+M       .gitignore
+M       MexicoLoanMatcher.jsx
+M       README.md
+T       docs
+M       netlify.toml
+M       package-lock.json
+M       postcss.config.js
+M       public/index.html
+M       src/App.css
+M       src/App.js
+M       src/App.jsx
+M       src/api.js
+M       src/components/AgentRegistrationCard.jsx
+M       src/components/AgentRegistrationForm.jsx
+M       src/components/App.js
+M       src/components/AppraisalServicesCard.jsx
+M       src/components/AuditProcessInfo.jsx
+M       src/components/ContactCard.jsx
+M       src/components/Dashboard.js
+M       src/components/DashboardCard.css
+M       src/components/DocumentUploader.jsx
+M       src/components/DynamicAuditModule.jsx
+M       src/components/FacialRecognition.jsx
+M       src/components/Footer.js
+M       src/components/Footer.jsx
+M       src/components/GrowerProfileModal.jsx
+M       src/components/LegalQuestionnaireCard.jsx
+M       src/components/MexicoRealEstate.jsx
+M       src/components/MexicoRefiCard.jsx
+M       src/components/MortgageTabUS.jsx
+M       src/components/OwnerBuyerForm.jsx
+M       src/components/PropertyListings.jsx
+M       src/components/PropertySearch.jsx
+M       src/components/RateTicker.jsx
+M       src/components/ReferralPartnerCard.jsx
+M       src/components/Scanner.jsx
+M       src/components/SearchEngines.js
+M       src/components/ServiceDrawer.jsx
+M       src/components/ServiceRequestCard.jsx
+M       src/components/Services.jsx
+M       src/components/ServicesAndCompliancePage.jsx
+M       src/components/ServicesComplianceAccordion.jsx
+M       src/components/ServicesTab.js
+M       src/components/ShortForm1003Sidebar.js
+M       src/components/SupplierIntelligenceCard.jsx
+M       src/components/TopRibbonTicker.jsx
+M       src/components/agricultureServices.js
+M       src/components/mortgageServices.js
+M       src/components/produceTop100.js
+M       src/components/servciesData.js
+M       src/components/serviceData.js
+M       src/components/serviceDetails.js
+M       src/config/db.js
+M       src/data/AuditDNAServiceCatalog.jsx
+M       src/data/Services.js
+M       src/data/agriTests.json
+M       src/data/cropsTaxonomy.js
+M       src/data/growerDatabase.js
+M       src/data/services.json
+M       src/data/services/agricultureServices.js
+M       src/data/services/mortgageServices.js
+M       src/data/services/serviceDetails.js
+M       src/data/services/servicesData.js
+M       src/data/servicesExpanded.json
+M       src/data/servicesMegaCatalog.json
+M       src/data/spartan_services.json
+M       src/data/waterSoilTests.json
+M       src/data/waterSources.json
+M       src/features/ag/AgMarket.jsx.bak.20250821145640
+M       src/features/ag/AgMarket.jsx.bak.20250821145823
+M       src/features/ag/AgMarket.jsx.bak.20250821150410
+M       src/features/ag/AgMarket.jsx.bak.20250821150525
+M       src/features/ag/AgMarket.jsx.bak.20250821150655
+M       src/features/ag/AgMarket.jsx.bak.20250821150925
+M       src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+M       src/features/docusign/DocuSignPanel.jsx
+M       src/features/files/FileUpload.jsx
+M       src/i18n/I18nProvider.jsx
+M       src/i18n/useI18n.js
+M       src/index.css
+M       src/index.js
+M       src/lib/Uploads.js
+M       src/lib/api.js
+M       src/lib/services/agriculture.json
+M       src/lib/services/compliance.json
+M       src/pages/Admin.js
+M       src/pages/Admin.jsx
+M       src/pages/AdminDashboard.jsx
+M       src/pages/AgExplorer.jsx
+M       src/pages/AgMarketSearchPage.jsx
+M       src/pages/AgMarketplace.jsx
+M       src/pages/AgentDashboard.jsx
+M       src/pages/AgentRegistration.jsx
+M       src/pages/AuditCatalogPage.jsx
+M       src/pages/AuditDNAApp.jsx
+M       src/pages/AuditDNAPage.jsx
+M       src/pages/AuditDNAServiceCatalog.jsx
+M       src/pages/CasesPage.jsx
+M       src/pages/CommissionAgreement.jsx
+M       src/pages/Compliance.jsx
+M       src/pages/ConstructionProjectCard.jsx
+M       src/pages/ContactCard.jsx
+M       src/pages/Dashboard.jsx
+M       src/pages/DocumentUploader.jsx
+M       src/pages/Factoring.jsx
+M       src/pages/FileUploads.jsx
+M       src/pages/FiveVerificationEngines.jsx
+M       src/pages/Home.jsx
+M       src/pages/MexicoLoans.jsx
+M       src/pages/MexicoRefiCard.jsx
+M       src/pages/Mortgage.jsx
+M       src/pages/MortgageSearchEngine.jsx
+M       src/pages/MortgageTabMexico.jsx
+M       src/pages/MortgageTabRealEstate.jsx
+M       src/pages/MortgageTabRealEstate.jsx.backup
+M       src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+M       src/pages/MortgageTabUS.jsx
+M       src/pages/NotificationCenter.jsx
+M       src/pages/OwnerBuyerForm.jsx
+M       src/pages/OwnerContactCard.jsx
+M       src/pages/PitchDeckPage.jsx
+M       src/pages/PropertySearch.jsx
+M       src/pages/PropertyUploadForm.jsx
+M       src/pages/Search.jsx
+M       src/pages/ServiceCategoryDetail.jsx
+M       src/pages/ServiceDetail.jsx
+M       src/pages/Services.jsx.backup
+M       src/pages/ServicesExplorer.jsx
+M       src/pages/Ticker.js
+M       src/pages/TradeFinance.jsx
+M       src/pages/TradePortal.js
+M       src/pages/USDA.jsx
+M       src/pages/USDA.jsx.bak.20250929-173344
+M       src/pages/USDAGrowerSearchEngine.jsx
+M       src/pages/USDAMarketplace.jsx
+M       src/pages/WaterTech.jsx
+M       src/pages/footer.jsx
+M       src/pages/marketpricespage.jsx
+M       src/pages/navbar.jsx
+D       src/pages/netlify.toml
+M       src/pages/producemarketpie.jsx
+M       src/pages/producepricechart.jsx
+M       src/pages/producetrendpage.jsx
+M       src/pages/producetrendsall.jsx
+M       src/pages/searchenginessection.jsx
+M       src/pages/servicepage.jsx
+M       src/pages/topnav.jsx
+M       src/services/services.json
+M       src/services/waterService.js
+M       src/utils/agMarketplaceAPI.js
+M       src/utils/aiMatchmaking.js
+M       src/utils/api.js
+M       src/utils/auth.js
+M       src/utils/tradeFinanceAPI.js
+M       tailwind.config.js
+  attempted unstage: index.html
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Also unstage any staged .html files found
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $stagedHtml = git diff --name-only --cached | Where-Object { $_ -like '*.html' }
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> foreach ($s in $stagedHtml) {
+  git restore --staged "$s" 2>$null
+  git reset HEAD -- "$s" 2>$null
+  Write-Host "  unstaged: $s"
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 6) Commit if there are staged changes
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Checking for staged changes to commit..."
+
+==> Checking for staged changes to commit...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $staged = git diff --name-only --cached
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($staged -and $staged.Count -gt 0) {
+  Write-Host "Staged files to commit:"
+  $staged | ForEach-Object { Write-Host "  $_" }
+  Write-Host "`nAttempting commit now..."
+  $commitOut = git commit -m "chore(recovery): resolve merge conflicts (accepted ours) and restore working tree" 2>&1
+  Write-Host $commitOut
+  if ($LASTEXITCODE -ne 0) {
+    Write-Host "`nCOMMIT FAILED. Paste the above commit output into the chat and I will diagnose. Stopping script."
+    Stop-Transcript 2>$null
+    exit 1
+  }
+} else {
+  Write-Host "No staged files detected; nothing to commit."
+}
+No staged files detected; nothing to commit.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 7) Push branch (if commit succeeded / branch exists)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Pushing branch to origin (if any)..."
+
+==> Pushing branch to origin (if any)...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Try {
+  $branch = git rev-parse --abbrev-ref HEAD 2>$null
+  if ($branch) {
+    $pushOut = git push -u origin $branch 2>&1
+    Write-Host $pushOut
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host "`nPUSH FAILED. Paste the push output above into the chat and I will advise."
+      Stop-Transcript 2>$null
+      exit 1
+    }
+  } else {
+    Write-Host "Could not determine branch name; skipping push."
+  }
+} Catch {
+  Write-Host "Push error: $($_.Exception.Message)"
+}
+git: 'credential-manager-core' is not a git command. See 'git --help'. branch 'fix-nested-frontend-20251029-171531' set up to track 'origin/fix-nested-frontend-20251029-171531'. Everything up-to-date
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 8) npm install (capture log)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Running npm install (log -> npm_install_$ts.log). This can take a few minutes..."
+
+==> Running npm install (log -> npm_install_20251029-182535.log). This can take a few minutes...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> npm install 2>&1 | Tee-Object -FilePath ".\npm_install_$ts.log"
+
+added 13 packages, removed 66 packages, changed 8 packages, and audited 1371 packages in 21s
+
+10 vulnerabilities (3 moderate, 7 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($LASTEXITCODE -ne 0) {
+  Write-Host "`nNPM INSTALL FAILED. Check .\npm_install_$ts.log and paste the first 40 lines here. Stopping."
+  Stop-Transcript 2>$null
+  exit 1
+} else {
+  Write-Host "npm install succeeded. Log: .\npm_install_$ts.log"
+}
+npm install succeeded. Log: .\npm_install_20251029-182535.log
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 9) Start app and log (foreground; keep window open)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Starting app now: npm start (logs -> npm_start_$ts.log). KEEP THIS WINDOW OPEN."
+
+==> Starting app now: npm start (logs -> npm_start_20251029-182535.log). KEEP THIS WINDOW OPEN.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> npm start 2>&1 | Tee-Object -FilePath ".\npm_start_$ts.log"
+
+> auditdna-frontend@1.0.0 start
+> react-scripts start
+
+node.exe : (node:13468) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' 
+option is deprecated. Please use the 'setupMiddlewares' option.
+At C:\Program Files\nodejs\npm.ps1:4 char:1
++ & $exe "$basedir\node_modules\npm\bin\npm-cli.js" $args
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:13468) [D...ewares' option.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+node.exe : (node:13468) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning:
+'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+At C:\Program Files\nodejs\npm.ps1:4 char:1
++ & $exe "$basedir\node_modules\npm\bin\npm-cli.js" $args
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:13468) [D...ewares' option.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:13468) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option 
+is deprecated. Please use the 'setupMiddlewares' option.
+(node:13468) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option
+is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Failed to compile.
+
+SyntaxError: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\src\index.js: Unexpected token (1:1)
+[0m[31m[1m>[22m[39m[90m 1 |[39m [33m<<[39m[33m<<[39m[33m<<[39m[33m<[39m [33mHEAD[39m
+ [90m   |[39m  [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mReactDOM[39m [36mfrom[39m [32m"react-dom/client"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m [33mApp[39m [36mfrom[39m [32m"./App"[39m[33m;[39m[0m
+    at parser.next (<anonymous>)
+    at normalizeFile.next (<anonymous>)
+    at run.next (<anonymous>)
+    at transform.next (<anonymous>)
+[1m[31mERROR[39m[22m in [1m./src/index.js[39m[22m
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\src\index.js: Unexpected token (1:1)
+
+[0m[31m[1m>[22m[39m[90m 1 |[39m [33m<<[39m[33m<<[39m[33m<<[39m[33m<[39m [33mHEAD[39m
+ [90m   |[39m  [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m [33mReact[39m [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mReactDOM[39m [36mfrom[39m [32m"react-dom/client"[39m[33m;[39m
+ [90m 4 |[39m [36mimport[39m [33mApp[39m [36mfrom[39m [32m"./App"[39m[33m;[39m[0m
+    at constructor (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:367:19)
+    at FlowParserMixin.raise (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:6624:19)
+    at FlowParserMixin.unexpected (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:6644:16)
+    at FlowParserMixin.jsxParseIdentifier (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4598:12)
+    at FlowParserMixin.jsxParseNamespacedName (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4605:23)
+    at FlowParserMixin.jsxParseElementName (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4614:21)
+    at FlowParserMixin.jsxParseOpeningElementAt (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4690:22)
+    at FlowParserMixin.jsxParseElementAt (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4715:33)
+    at FlowParserMixin.jsxParseElement (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4778:17)
+    at FlowParserMixin.parseExprAtom (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:4788:19)
+    at FlowParserMixin.parseExprSubscripts (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:11145:23)
+    at FlowParserMixin.parseUpdate (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:11130:21)
+    at FlowParserMixin.parseMaybeUnary (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:11110:23)
+    at FlowParserMixin.parseMaybeUnaryOrPrivate (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10963:61)
+    at FlowParserMixin.parseExprOps (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10968:23)
+    at FlowParserMixin.parseMaybeConditional (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10945:23)
+    at FlowParserMixin.parseMaybeAssign (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10895:21)
+    at C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:3527:39
+    at FlowParserMixin.tryParse (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:6932:20)
+    at FlowParserMixin.parseMaybeAssign (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:3527:18)
+    at FlowParserMixin.parseExpressionBase (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10848:23)
+    at C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10844:39
+    at FlowParserMixin.allowInAnd (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:12495:16)
+    at FlowParserMixin.parseExpression (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:10844:17)
+    at FlowParserMixin.parseStatementContent (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:12971:23)
+    at FlowParserMixin.parseStatementLike (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:12843:17)
+    at FlowParserMixin.parseStatementLike (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:2945:24)
+    at FlowParserMixin.parseModuleItem (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:12820:17)
+    at FlowParserMixin.parseBlockOrModuleBlockBody (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:13392:36)
+    at FlowParserMixin.parseBlockBody (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:13385:10)
+    at FlowParserMixin.parseProgram (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:12698:10)
+    at FlowParserMixin.parseTopLevel (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:12688:25)
+    at FlowParserMixin.parseTopLevel (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:3714:28)
+    at FlowParserMixin.parse (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:14568:25)
+    at parse (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\parser\lib\index.js:14602:38)
+    at parser (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\core\lib\parser\index.js:41:34)
+    at parser.next (<anonymous>)
+    at normalizeFile (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\core\lib\transformation\normalize-file.js:64:37)
+    at normalizeFile.next (<anonymous>)
+    at run (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\core\lib\transformation\index.js:22:50)
+    at run.next (<anonymous>)
+    at transform (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\core\lib\transform.js:22:33)
+    at transform.next (<anonymous>)
+    at step (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\gensync\index.js:261:32)
+    at C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\gensync\index.js:223:11)
+    at C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\gensync\index.js:189:28
+    at C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+    at C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\gensync\index.js:113:33
+    at step (C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\node_modules\gensync\index.js:287:14)
+
+webpack compiled with [1m[31m1 error[39m[22m
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 10) End transcript (this may not run until npm start exits)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Stop-Transcript 2>$null
+**********************
+Windows PowerShell transcript end
+End time: 20251029182726
+**********************

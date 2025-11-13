@@ -1,0 +1,106 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20251029171121
+Username: MFGIINC\Mexausa
+RunAs User: MFGIINC\Mexausa
+Configuration Name: 
+Machine: MFGIINC (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 5672
+PSVersion: 5.1.26100.6725
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6725
+BuildVersion: 10.0.26100.6725
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\fix_nested_transcript_20251029-171121.txt
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> try {
+  $repoRoot = (git rev-parse --show-toplevel).Trim()
+} catch {
+  Write-Host "ERROR: not inside a git repository. Run this from inside the repo and try again." -ForegroundColor Red
+  Stop-Transcript 2>$null
+  exit 1
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "REPO_ROOT: $repoRoot"
+REPO_ROOT: C:/AuditDNA/AuditDNA_Supreme_Frontend/frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $nested = Join-Path $repoRoot "frontend\frontend"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $backupRoot = Join-Path $repoRoot "transfer_backups"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $nestedBackup = Join-Path $backupRoot "nested_backup_$timestamp"
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if (-not (Test-Path $nested)) {
+  Write-Host "No nested folder found at: $nested" -ForegroundColor Yellow
+  Write-Host "Nothing to fix. If you still see duplicated files, show me the output of: Get-ChildItem -Recurse -Force -Path (Join-Path $repoRoot 'frontend') | Select-Object FullName"
+  Stop-Transcript 2>$null
+  exit 0
+}
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Show summary of nested folder
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "FOUND nested folder:" $nested -ForegroundColor Cyan
+FOUND nested folder: C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $files = Get-ChildItem -Path $nested -Recurse -File -ErrorAction SilentlyContinue
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $totalFiles = $files.Count
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $totalBytes = ($files | Measure-Object -Property Length -Sum).Sum
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "  Files in nested folder: $totalFiles"
+  Files in nested folder: 2857
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ("  Total size: {0:N2} MB" -f ($totalBytes/1MB))
+  Total size: 39.36 MB
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Top 20 largest files in nested folder:"
+Top 20 largest files in nested folder:
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $files | Sort-Object Length -Descending | Select-Object FullName, @{Name='MB';Expression={[math]::Round($_.Length/1MB,2)}} -First 20 | Format-Table -AutoSize
+
+FullName
+--------
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\file-structure.txt
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\AuditDNA_Analysis_20251010-094322.txt
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\audit-frontend-filetree.txt
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\package-lock.json
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\apps\agriculture-app\package-lock.json
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\apps\realestate-app\package-lock.json
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\apps\financial-app\package-lock.json
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\AuditDNA_UI_20250923-125700.zip
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\UI_Snapshot_20250923-125211.zip
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\build\static\js\main.1be4f41d.js
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\package-lock.json.bak
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\create_powerpony_all.ps1
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\COMPLETE_SYSTEM_BACKUP_20251028_130320\SYSTEM_MANIF...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\BACKUP_BEFORE_FINAL_FIX_20251028_120350\pages\FiveV...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\EMERGENCY_BACKUP_20251027_181959\pages\FiveVerifica...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\COMPLETE_SYSTEM_BACKUP_20251028_130320\pages\FiveVe...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\FINAL_BACKUP_20251028_120912\pages\FiveVerification...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\BACKUP_BEFORE_GLASS_20251027_180440\pages\FiveVerif...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\COMPLETE_SYSTEM_BACKUP_20251028_130320\pages\Tracea...
+C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\frontend\frontend\EMERGENCY_BACKUP_20251027_181959\pages\Traceability...
+
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Current git branch:" (git rev-parse --abbrev-ref HEAD)
+Current git branch: transfer-supreme-20251029-164920
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "Recent commits (top 5):"
+Recent commits (top 5):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git log --oneline -n 5
+e771d03 (HEAD -> transfer-supreme-20251029-164920, origin/tmp-merge-main, origin/main, origin/HEAD, tmp-merge-main, pre-
+transfer-snapshot-20251029-164920) Merge pull request #151 from SeabassFather/copilot/sanitize-inspector-script
+aeb9ab3 (origin/copilot/sanitize-inspector-script) Initial plan
+f5b19b7 Merge pull request #144 from SeabassFather/copilot/refactor-codebase-maintainability
+2d602f1 Merge pull request #143 from SeabassFather/copilot/add-audit-logging-feature
+91bb1db Merge pull request #142 from SeabassFather/copilot/add-user-notification-system
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host ""
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $confirm = Read-Host "Type YES to move the nested folder to a safe backup ($nestedBackup), create a branch to record the fix, commit and push the change. Anything else will cancel."
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($confirm -ne "YES") {
+  Write-Host "Cancelled by user. No changes made."
+  Stop-Transcript 2>$null
+  exit 0
+}
+Cancelled by user. No changes made.
+**********************
+Windows PowerShell transcript end
+End time: 20251029171150
+**********************

@@ -1,0 +1,476 @@
+**********************
+Windows PowerShell transcript start
+Start time: 20251029174900
+Username: MFGIINC\Mexausa
+RunAs User: MFGIINC\Mexausa
+Configuration Name: 
+Machine: MFGIINC (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 9116
+PSVersion: 5.1.26100.6725
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6725
+BuildVersion: 10.0.26100.6725
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend\fix_progress_20251029-174858.txt
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 1) Check package.json for merge markers
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Checking package.json for conflict markers..."
+
+==> Checking package.json for conflict markers...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Select-String -Path package.json -Pattern '<<<<<|=====|>>>>>' -SimpleMatch -List -ErrorAction SilentlyContinue
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 2) If there are markers, fix package.json:
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Option A (manual, recommended): open in editor, remove <<<<<<< / ======= / PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #   Use either VS Code or Notepad:
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #     code package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #   or
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #     notepad package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # After manual edit run:
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # git add package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Option B (quick): accept incoming (theirs) or current (ours)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # Pick one of these two quick commands ONLY if you want to accept one side automatically:
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #   Accept incoming (theirs):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #     git checkout --theirs -- package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #     git add package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #   Accept current (ours):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #     git checkout --ours -- package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #     git add package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> #
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`nIf package.json had markers, fix it now (open editor), then run: git add package.json"
+
+If package.json had markers, fix it now (open editor), then run: git add package.json
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "If you already fixed it, run the next section."
+If you already fixed it, run the next section.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 3) Unstage HTML files that cause the hook (safe: files remain on disk)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Unstaging common index.html files that trigger the pre-commit hook..."
+
+==> Unstaging common index.html files that trigger the pre-commit hook...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git restore --staged frontend/index.html frontend/public/index.html public/index.html index.html 2>$null || git reset HEAD -- frontend/index.html frontend/public/index.html public/index.html index.html 2>$null
+At line:1 char:106
++ ... end/public/index.html public/index.html index.html 2>$null || git res ...
++                                                                ~~
+The token '||' is not a valid statement separator in this version.
+At line:1 char:106
++ ... end/public/index.html public/index.html index.html 2>$null || git res ...
++                                                                ~~
+The token '||' is not a valid statement separator in this version.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : InvalidEndOfLine
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 4) Show which .html files are still staged and any staged files overall
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Staged file list (after unstaging common index.html files):"
+
+==> Staged file list (after unstaging common index.html files):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git diff --name-only --cached
+
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Show staged .html files (and lines that match hook if any):"
+
+==> Show staged .html files (and lines that match hook if any):
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> $stagedHtml = git diff --name-only --cached | Where-Object { $_ -match '\.html$' }
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> if ($stagedHtml) {
+  foreach ($f in $stagedHtml) {
+    Write-Host "`n--- $f ---"
+    Select-String -Path $f -Pattern 'type="module"','/src/main.jsx' -SimpleMatch -List -ErrorAction SilentlyContinue | ForEach-Object { "{0}:{1}: {2}" -f $_.Path,$_.LineNumber,$_.Line }
+  }
+} else {
+  Write-Host "(no staged .html files)"
+}
+(no staged .html files)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 5) If package.json was edited, ensure it's staged:
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> package.json staged? (will show file if staged)"
+
+==> package.json staged? (will show file if staged)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git diff --name-only --cached | Select-String -Pattern '^package.json$' -Quiet; if ($?) { Write-Host "package.json is staged" } else { Write-Host "package.json is NOT staged" }
+package.json is staged
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 6) Commit remaining staged files (should be only the frontend deletions). If commit is blocked by hook, we will see the error.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> Attempting commit now (will show hook errors if present)..."
+
+==> Attempting commit now (will show hook errors if present)...
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git commit -m "fix: remove accidental nested frontend copy (moved to transfer_backups)" 2>&1 | Write-Host
+On branch fix-nested-frontend-20251029-171531
+Your branch is up to date with 'origin/fix-nested-frontend-20251029-171531'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .env
+	modified:   .eslintrc.json
+	modified:   .gitignore
+	modified:   MexicoLoanMatcher.jsx
+	modified:   README.md
+	deleted:    docs
+	modified:   netlify.toml
+	modified:   package-lock.json
+	modified:   postcss.config.js
+	modified:   public/index.html
+	modified:   src/App.css
+	modified:   src/App.js
+	modified:   src/App.jsx
+	modified:   src/api.js
+	modified:   src/components/AgentRegistrationCard.jsx
+	modified:   src/components/AgentRegistrationForm.jsx
+	modified:   src/components/App.js
+	modified:   src/components/AppraisalServicesCard.jsx
+	modified:   src/components/AuditProcessInfo.jsx
+	modified:   src/components/ContactCard.jsx
+	modified:   src/components/Dashboard.js
+	modified:   src/components/DashboardCard.css
+	modified:   src/components/DocumentUploader.jsx
+	modified:   src/components/DynamicAuditModule.jsx
+	modified:   src/components/FacialRecognition.jsx
+	modified:   src/components/Footer.js
+	modified:   src/components/Footer.jsx
+	modified:   src/components/GrowerProfileModal.jsx
+	modified:   src/components/LegalQuestionnaireCard.jsx
+	modified:   src/components/MexicoRealEstate.jsx
+	modified:   src/components/MexicoRefiCard.jsx
+	modified:   src/components/MortgageTabUS.jsx
+	modified:   src/components/OwnerBuyerForm.jsx
+	modified:   src/components/PropertyListings.jsx
+	modified:   src/components/PropertySearch.jsx
+	modified:   src/components/RateTicker.jsx
+	modified:   src/components/ReferralPartnerCard.jsx
+	modified:   src/components/Scanner.jsx
+	modified:   src/components/SearchEngines.js
+	modified:   src/components/ServiceDrawer.jsx
+	modified:   src/components/ServiceRequestCard.jsx
+	modified:   src/components/Services.jsx
+	modified:   src/components/ServicesAndCompliancePage.jsx
+	modified:   src/components/ServicesComplianceAccordion.jsx
+	modified:   src/components/ServicesTab.js
+	modified:   src/components/ShortForm1003Sidebar.js
+	modified:   src/components/SupplierIntelligenceCard.jsx
+	modified:   src/components/TopRibbonTicker.jsx
+	modified:   src/components/agricultureServices.js
+	modified:   src/components/mortgageServices.js
+	modified:   src/components/produceTop100.js
+	modified:   src/components/servciesData.js
+	modified:   src/components/serviceData.js
+	modified:   src/components/serviceDetails.js
+	modified:   src/config/db.js
+	modified:   src/data/AuditDNAServiceCatalog.jsx
+	modified:   src/data/Services.js
+	modified:   src/data/agriTests.json
+	modified:   src/data/cropsTaxonomy.js
+	modified:   src/data/growerDatabase.js
+	modified:   src/data/services.json
+	modified:   src/data/services/agricultureServices.js
+	modified:   src/data/services/mortgageServices.js
+	modified:   src/data/services/serviceDetails.js
+	modified:   src/data/services/servicesData.js
+	modified:   src/data/servicesExpanded.json
+	modified:   src/data/servicesMegaCatalog.json
+	modified:   src/data/spartan_services.json
+	modified:   src/data/waterSoilTests.json
+	modified:   src/data/waterSources.json
+	modified:   src/features/ag/AgMarket.jsx.bak.20250821145640
+	modified:   src/features/ag/AgMarket.jsx.bak.20250821145823
+	modified:   src/features/ag/AgMarket.jsx.bak.20250821150410
+	modified:   src/features/ag/AgMarket.jsx.bak.20250821150525
+	modified:   src/features/ag/AgMarket.jsx.bak.20250821150655
+	modified:   src/features/ag/AgMarket.jsx.bak.20250821150925
+	modified:   src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+	modified:   src/features/docusign/DocuSignPanel.jsx
+	modified:   src/features/files/FileUpload.jsx
+	modified:   src/i18n/I18nProvider.jsx
+	modified:   src/i18n/useI18n.js
+	modified:   src/index.css
+	modified:   src/index.js
+	modified:   src/lib/Uploads.js
+	modified:   src/lib/api.js
+	modified:   src/lib/services/agriculture.json
+	modified:   src/lib/services/compliance.json
+	modified:   src/pages/Admin.js
+	modified:   src/pages/Admin.jsx
+	modified:   src/pages/AdminDashboard.jsx
+	modified:   src/pages/AgExplorer.jsx
+	modified:   src/pages/AgMarketSearchPage.jsx
+	modified:   src/pages/AgMarketplace.jsx
+	modified:   src/pages/AgentDashboard.jsx
+	modified:   src/pages/AgentRegistration.jsx
+	modified:   src/pages/AuditCatalogPage.jsx
+	modified:   src/pages/AuditDNAApp.jsx
+	modified:   src/pages/AuditDNAPage.jsx
+	modified:   src/pages/AuditDNAServiceCatalog.jsx
+	modified:   src/pages/CasesPage.jsx
+	modified:   src/pages/CommissionAgreement.jsx
+	modified:   src/pages/Compliance.jsx
+	modified:   src/pages/ConstructionProjectCard.jsx
+	modified:   src/pages/ContactCard.jsx
+	modified:   src/pages/Dashboard.jsx
+	modified:   src/pages/DocumentUploader.jsx
+	modified:   src/pages/Factoring.jsx
+	modified:   src/pages/FileUploads.jsx
+	modified:   src/pages/FiveVerificationEngines.jsx
+	modified:   src/pages/Home.jsx
+	modified:   src/pages/MexicoLoans.jsx
+	modified:   src/pages/MexicoRefiCard.jsx
+	modified:   src/pages/Mortgage.jsx
+	modified:   src/pages/MortgageSearchEngine.jsx
+	modified:   src/pages/MortgageTabMexico.jsx
+	modified:   src/pages/MortgageTabRealEstate.jsx
+	modified:   src/pages/MortgageTabRealEstate.jsx.backup
+	modified:   src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+	modified:   src/pages/MortgageTabUS.jsx
+	modified:   src/pages/NotificationCenter.jsx
+	modified:   src/pages/OwnerBuyerForm.jsx
+	modified:   src/pages/OwnerContactCard.jsx
+	modified:   src/pages/PitchDeckPage.jsx
+	modified:   src/pages/PropertySearch.jsx
+	modified:   src/pages/PropertyUploadForm.jsx
+	modified:   src/pages/Search.jsx
+	modified:   src/pages/ServiceCategoryDetail.jsx
+	modified:   src/pages/ServiceDetail.jsx
+	modified:   src/pages/Services.jsx.backup
+	modified:   src/pages/ServicesExplorer.jsx
+	modified:   src/pages/Ticker.js
+	modified:   src/pages/TradeFinance.jsx
+	modified:   src/pages/TradePortal.js
+	modified:   src/pages/USDA.jsx
+	modified:   src/pages/USDA.jsx.bak.20250929-173344
+	modified:   src/pages/USDAGrowerSearchEngine.jsx
+	modified:   src/pages/USDAMarketplace.jsx
+	modified:   src/pages/WaterTech.jsx
+	modified:   src/pages/footer.jsx
+	modified:   src/pages/marketpricespage.jsx
+	modified:   src/pages/navbar.jsx
+	deleted:    src/pages/netlify.toml
+	modified:   src/pages/producemarketpie.jsx
+	modified:   src/pages/producepricechart.jsx
+	modified:   src/pages/producetrendpage.jsx
+	modified:   src/pages/producetrendsall.jsx
+	modified:   src/pages/searchenginessection.jsx
+	modified:   src/pages/servicepage.jsx
+	modified:   src/pages/topnav.jsx
+	modified:   src/services/services.json
+	modified:   src/services/waterService.js
+	modified:   src/utils/agMarketplaceAPI.js
+	modified:   src/utils/aiMatchmaking.js
+	modified:   src/utils/api.js
+	modified:   src/utils/auth.js
+	modified:   src/utils/tradeFinanceAPI.js
+	modified:   tailwind.config.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	APP_UPDATE_INSTRUCTIONS.txt
+	Admin.js
+	Admin.jsx
+	AdminDashboard.jsx
+	AgExplorer.jsx
+	AgMainPage.jsx
+	AgMarketplace.jsx
+	AgentDashboard.jsx
+	AgentRegistration.jsx
+	Agriculture.jsx
+	Analytics.jsx
+	App.js
+	AuditDNAEnvAI.jsx
+	BACKUP_BEFORE_GLASS_20251027_180440/
+	COMPLETE_SYSTEM_BACKUP_20251028_130320/
+	Compliance.jsx
+	EMERGENCY_BACKUP_20251027_181959/
+	FEATURES.txt
+	FINAL_BACKUP_20251028_120912/
+	FORCE_REBUILD.bat
+	FuelOilAnalysis.jsx
+	InvoiceFinancing.jsx
+	MexicoOps.jsx
+	NUCLEAR_RESET.bat
+	QUICK_START.txt
+	RealEstate.jsx
+	SEABASSFATHER_DADDIES_FILE_1_WATER_SOIL_AG.txt
+	START_CLEAN.bat
+	TESTING_API_ROUTES.js
+	TESTING_SERVICES_COMPLETE.txt
+	TESTING_SERVICES_PRICING.txt
+	Tariffs.jsx
+	TradeFinance.jsx
+	USDA.jsx
+	WATER_SOIL_MODULES.txt
+	apps/
+	autoscaffold-watertech.ps1
+	conflicted_files_list.txt
+	copy_frontend_to_final.ps1
+	create_a_b_c.ps1
+	create_and_push_powerpony.ps1
+	create_pki_stripe.ps1
+	create_powerpony_1_6.ps1
+	create_powerpony_all.ps1
+	create_powerpony_minimal.ps1
+	create_shortcuts.ps1
+	docs~HEAD
+	e --abbrev-ref HEAD)
+	"e --abbrev-ref HEAD) 2\357\200\276&1 \357\201\274 Write-Host"
+	et HEAD .
+	fix_nested_frontend_copy.ps1
+	fix_nested_transcript_20251029-171121.txt
+	fix_progress_20251029-174858.txt
+	frontend/BACKUP_BEFORE_GLASS_20251027_180440/components/supplier-intel-standalone.html
+	frontend/COMPLETE_SYSTEM_BACKUP_20251028_130320/components/supplier-intel-standalone.html
+	frontend/EMERGENCY_BACKUP_20251027_181959/components/supplier-intel-standalone.html
+	frontend/FINAL_BACKUP_20251028_120912/components/supplier-intel-standalone.html
+	frontend/apps/agriculture-app/public/index.html
+	frontend/apps/financial-app/public/index.html
+	frontend/apps/realestate-app/public/index.html
+	frontend/index.html
+	frontend/public/catalog-preview.html
+	frontend/public/index.html
+	frontend/public/superman-catalog-demo.html
+	frontend/src/components/supplier-intel-standalone.html
+	frontend/src/public/index.html
+	frontend_html_check.ps1
+	kill_port_3000.ps1
+	package.json.broken_20251029-181146
+	public/favicon.ico
+	public/logo192.png
+	public/logo512.png
+	public/manifest.json
+	public/robots.txt
+	run_auditdna_backend.ps1
+	run_auditdna_stack.bat
+	save_auditdna_ui.ps1
+	scripts/inspect_and_protect.ps1
+	src/AGSciencesModule.jsx
+	src/AGSciencesModule_OLD_BACKUP.jsx
+	src/AG_CATALOG_EXPANSION_PLAN.txt
+	src/AI_SOUND_FIX_INSTRUCTIONS.txt
+	src/AgGerminationModule.jsx
+	src/AgScienceDashboard.jsx
+	src/AgScienceDashboard_backup.jsx
+	src/AlcoholAnalysis.css
+	src/AlcoholAnalysisModule.jsx
+	src/AlcoholTestingModule.jsx
+	src/App.js.backup
+	src/App.js.backup_20251028_105119
+	src/App.js.corrupted.backup
+	src/App.jsx.backup.20251026-163507
+	src/App.jsx.backup.20251027_130145
+	src/App.test.emergency.jsx
+	src/AreaConverter.jsx
+	src/AuditDNAEnvAI.css
+	src/AuditDNAEnvAI.jsx
+	src/AuditDNAEnvAI.jsx.backup.20251027_120039
+	src/AuditDNAEnvAI_broken.jsx
+	src/AuditDNAHeader.jsx
+	src/BillingComponent.jsx
+	src/CLEAN_AI_SOUND_FIX.txt
+	src/CRMAnalyticsDashboard.jsx
+	src/CartContext.jsx
+	src/CartPage.jsx
+	src/CheckoutPage.jsx
+	src/ContactCardComponent.jsx
+	src/ContactPage.jsx
+	src/Dashboard.jsx
+	src/EnginePerformanceModule.jsx
+	src/EnvironmentalAnalyzer.jsx
+	src/EpicProgressSteps.jsx
+	src/ExportUtils.jsx
+	src/FieldConditionsLogger.jsx
+	src/FileUploadComponent.jsx
+	src/Footer.jsx
+	src/FuelOilAnalysis.css
+	src/FuelOilAnalysisModule.jsx
+	src/FuelTestingModule.jsx
+	src/HomePage.jsx
+	src/HomePage_Fixed.jsx
+	src/HomePage_Fixed_NO_PURPLE.jsx
+	src/LabDashboard.jsx
+	src/LanguageContext.jsx
+	src/LanguageToggle.jsx
+	src/Loader.jsx
+	src/Marketplace.jsx
+	src/MicroFrontendLoader.jsx
+	src/Navbar.jsx
+	src/OrdersPage.jsx
+	src/ProduceIntelligenceModule.jsx
+	src/ProduceScienceVerification.jsx
+	src/QRCodeComponent.jsx
+	src/QRCodeGenerator.jsx
+	src/ResultsPortal.jsx
+	src/SearchableTestSelector.jsx
+	src/SoilAnalysis.css
+	src/SoilAnalysisModule.jsx
+	src/TestingServices.css
+	src/TestingServicesHub.jsx
+	src/TestingServicesHub.jsx.BROKEN
+	src/Traceability.jsx
+	src/TraceabilityModule.jsx
+	src/TraceabilityTracker.jsx
+	src/UploadCenter.jsx
+	src/WaterTech.css
+	src/WaterTechAdvanced.css
+	src/WaterTechModuleAdvanced.jsx
+	src/WaterTechModuleAdvanced.jsx.BROKEN_BACKUP
+	src/agCategories.js
+	src/agGerminationCatalog.js
+	src/agTestCatalog.js
+	src/agTestCatalog_backup.js
+	src/agTestLoader.js
+	src/aiAnalysisEngine.js
+	src/alcoholTestCatalog.js
+	src/audioSystem.js
+	src/colors.css
+	src/components/AttestationForm.jsx
+	src/components/DashboardCard.jsx
+	src/components/GrowerDashboard.jsx
+	src/components/Loading.jsx
+	src/components/MegaNavbar.jsx
+	src/components/RREADME.md
+	src/components/UploadWidget.jsx
+	src/components/VerificationPortal.jsx
+	src/components/WaterSearch.jsx
+	src/components/usda/
+	src/config/features.js
+	src/engineTestCatalog.js
+	src/fuelOilTestCatalog.js
+	src/gasTestCatalog.js
+	src/glassmorphism.css
+	src/modules/
+	src/oilTestCatalog.js
+	src/pages/AgentExplorer.jsx
+	src/pages/Agriculture.jsx
+	src/pages/Analytics.jsx
+	src/pages/AuditDNAUniverseMap.jsx
+	src/pages/FinancialServices.jsx
+	src/pages/FrozenAvocadoGuacamole.jsx
+	src/pages/InvoiceFinancing.jsx
+	src/pages/Megadashboard.jsx
+	src/pages/MexicoLoanMatcher.jsx
+	src/pages/MexicoOps.jsx
+	src/pages/RealEstate.jsx
+	src/pages/Tariffs.jsx
+	src/pages/Traceabilitymodule.jsx
+	src/simple-theme.css
+	src/soilTestCatalog.js
+	src/src/
+	src/styles/auditdna-theme.css
+	src/styles/tailwind.config.js
+	src/translations.js
+	src/waterTestCatalog.js
+	"t \357\200\242`n=== STAGED FILES ===\357\200\242"
+	"t-Path .gitignore)) { New-Item -ItemType File -Path .gitignore -Force \357\201\274 Out-Null }"
+	"ted frontend copy (moved to transfer_backups)\357\200\242"
+	"ted frontend copy (moved to transfer_backups)\357\200\242 2\357\200\276&1 \357\201\274 Write-Host"
+	transfer_transcript_20251029-164859.txt
+	watertech-traceability-scaffold.ps1
+
+no changes added to commit (use "git add" and/or "git commit -a")
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 7) If commit succeeded, push branch
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Write-Host "`n==> If commit succeeded push the branch (will print push output)"
+
+==> If commit succeeded push the branch (will print push output)
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> git push -u origin $(git rev-parse --abbrev-ref HEAD) 2>&1 | Write-Host
+git: 'credential-manager-core' is not a git command. See 'git --help'.
+branch 'fix-nested-frontend-20251029-171531' set up to track 'origin/fix-nested-frontend-20251029-171531'.
+Everything up-to-date
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> # 8) Stop transcript
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> Stop-Transcript
+**********************
+Windows PowerShell transcript end
+End time: 20251029182041
+**********************

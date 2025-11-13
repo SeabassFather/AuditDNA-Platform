@@ -1,10 +1,10 @@
 // ================================================================
 // AUDITDNA FRONTEND - UNIFIED DARK THEME
 // ================================================================
-// Date: 2025-11-12 03:14:00 UTC
+// Date: 2025-11-13 00:06:46 UTC
 // Author: SeabassFather
 // Theme: Professional Dark (Bloomberg-style)
-// Status: PRODUCTION BUILD - 14/14 MODULES
+// Status: PRODUCTION BUILD - 16/16 MODULES
 // ================================================================
 
 import React, { useState } from 'react';
@@ -22,11 +22,13 @@ import CartSummary from './CartSummary';
 import FoodSafetyDashboard from './pages/foodsafety/FoodSafetyDashboard';
 import ProduceIntelligenceDashboard from './pages/produce/ProduceIntelligenceDashboard';
 import CMProductsIntelligenceDashboard from './pages/cmproducts/CMProductsIntelligenceDashboard';
+import UnifiedSourcingDashboard from './pages/cmproducts/UnifiedSourcingDashboard';
 import SupplierIntelligenceSearchEngine from './pages/suppliers/SupplierIntelligenceSearchEngine';
 import TraceabilityAIHub from './pages/traceability/TraceabilityAIHub';
 import SoilDashboard from './pages/soil/SoilDashboard';
 import LatinAmericaTradeDashboard from './pages/latinamerica/LatinAmericaTradeDashboard';
 import GrowerPortalEnhanced from './pages/growers/GrowerPortalEnhanced';
+import GrowerIntelligenceDashboard from './pages/supplier-intelligence/GrowerIntelligenceDashboard';
 
 function AppContent() {
   const { language, toggleLanguage } = useLanguage();
@@ -40,6 +42,8 @@ function AppContent() {
     { id: 'produce-po', label: { en: 'PO Form', es: 'Orden' } },
     { id: 'food-safety', label: { en: 'Safety', es: 'Seguridad' } },
     { id: 'supplier-intel', label: { en: 'Suppliers', es: 'Proveedores' } },
+    { id: 'unified-sourcing', label: { en: '🎯 Smart Sourcing', es: '🎯 Abastecimiento' } },
+    { id: 'grower-intel', label: { en: '🕵️ Grower Intel', es: '🕵️ Intel Productores' } },
     { id: 'traceability', label: { en: 'Trace', es: 'Trazabilidad' } },
     { id: 'water-tech', label: { en: 'Water', es: 'Agua' } },
     { id: 'soil', label: { en: 'Soil', es: 'Suelo' } },
@@ -51,21 +55,40 @@ function AppContent() {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'home': return <HomePage setCurrentPage={setCurrentPage} />;
-      case 'cm-products': return <CMProductsIntelligenceDashboard />;
-      case 'produce-intel': return <ProduceIntelligenceDashboard />;
-      case 'produce-analytics': return <ProduceAnalyticsPanel />;
-      case 'produce-po': return <ProducePOForm />;
-      case 'food-safety': return <FoodSafetyDashboard />;
-      case 'supplier-intel': return <SupplierIntelligenceSearchEngine />;
-      case 'traceability': return <TraceabilityAIHub />;
-      case 'water-tech': return <WaterTechModuleAdvanced />;
-      case 'soil': return <SoilDashboard />;
-      case 'growers': return <GrowerPortalEnhanced />;
-      case 'latin-america': return <LatinAmericaTradeDashboard />;
-      case 'factoring': return <FactoringDashboard />;
-      case 'cart': return <CartPage />;
-      default: return <HomePage setCurrentPage={setCurrentPage} />;
+      case 'home': 
+        return <HomePage setCurrentPage={setCurrentPage} />;
+      case 'cm-products': 
+        return <CMProductsIntelligenceDashboard />;
+      case 'unified-sourcing': 
+        return <UnifiedSourcingDashboard />;
+      case 'grower-intel': 
+        return <GrowerIntelligenceDashboard />;
+      case 'produce-intel': 
+        return <ProduceIntelligenceDashboard />;
+      case 'produce-analytics': 
+        return <ProduceAnalyticsPanel />;
+      case 'produce-po': 
+        return <ProducePOForm />;
+      case 'food-safety': 
+        return <FoodSafetyDashboard />;
+      case 'supplier-intel': 
+        return <SupplierIntelligenceSearchEngine />;
+      case 'traceability': 
+        return <TraceabilityAIHub />;
+      case 'water-tech': 
+        return <WaterTechModuleAdvanced />;
+      case 'soil': 
+        return <SoilDashboard />;
+      case 'growers': 
+        return <GrowerPortalEnhanced />;
+      case 'latin-america': 
+        return <LatinAmericaTradeDashboard />;
+      case 'factoring': 
+        return <FactoringDashboard />;
+      case 'cart': 
+        return <CartPage />;
+      default: 
+        return <HomePage setCurrentPage={setCurrentPage} />;
     }
   };
 
@@ -191,18 +214,104 @@ function HomePage({ setCurrentPage }) {
   const { language } = useLanguage();
   
   const features = [
-    { id: 'cm-products', icon: '🌾', title: { en: 'CM Products International', es: 'CM Products International' }, desc: { en: 'AI market intelligence, 5-year trends, grower registry, Google Calendar integration, Zadarma VoIP', es: 'Inteligencia IA, tendencias 5 años, registro productores, integración Google Calendar, Zadarma VoIP' }, price: 'Free' },
-    { id: 'produce-intel', icon: '🥑', title: { en: 'Produce Intelligence', es: 'Inteligencia de Productos' }, desc: { en: 'Professional charts, 30-day trends, 5-year analysis, multi-commodity comparison', es: 'Gráficos profesionales, tendencias 30 días, análisis 5 años, comparación multi-producto' }, price: 'Free' },
-    { id: 'produce-analytics', icon: '📊', title: { en: 'Produce Analytics', es: 'Análisis de Productos' }, desc: { en: 'AI price prediction, demand forecasting, trend analysis', es: 'Predicción precios IA, pronóstico demanda, análisis tendencias' }, price: 'Free' },
-    { id: 'produce-po', icon: '📝', title: { en: 'Purchase Order', es: 'Orden de Compra' }, desc: { en: 'Smart pricing, auto-fill, compliance checking', es: 'Precios inteligentes, autocompletado, verificación cumplimiento' }, price: 'Free' },
-    { id: 'traceability', icon: '🔗', title: { en: 'Traceability AI', es: 'Trazabilidad IA' }, desc: { en: 'QR codes, blockchain verification, supply chain tracking', es: 'Códigos QR, verificación blockchain, seguimiento cadena suministro' }, price: 'Free' },
-    { id: 'supplier-intel', icon: '🏢', title: { en: 'Supplier Intelligence', es: 'Inteligencia Proveedores' }, desc: { en: 'Supplier scoring, risk assessment, smart contacts, performance tracking', es: 'Puntuación proveedores, evaluación riesgos, contactos inteligentes' }, price: 'Free' },
-    { id: 'food-safety', icon: '🛡️', title: { en: 'Food Safety', es: 'Seguridad Alimentaria' }, desc: { en: 'HACCP, certifications, CAPA, lab results, compliance audits', es: 'HACCP, certificaciones, CAPA, resultados laboratorio, auditorías' }, price: '$299' },
-    { id: 'water-tech', icon: '💧', title: { en: 'Water Analysis', es: 'Análisis de Agua' }, desc: { en: 'AI analysis 150+ parameters, EPA/WHO compliance verification', es: 'Análisis IA 150+ parámetros, verificación EPA/WHO' }, price: '$149' },
-    { id: 'soil', icon: '🌱', title: { en: 'Soil Analysis', es: 'Análisis de Suelo' }, desc: { en: 'NPK, pH, organic matter, micronutrients, heavy metals', es: 'NPK, pH, materia orgánica, micronutrientes, metales pesados' }, price: '$149' },
-    { id: 'growers', icon: '🚜', title: { en: 'Grower Portal', es: 'Portal Productores' }, desc: { en: 'Harvest scheduling, freight calculator, GPS tracking, insurance, real-time logistics', es: 'Programación cosechas, calculadora flete, rastreo GPS, seguros, logística tiempo real' }, price: 'Free' },
-    { id: 'latin-america', icon: '🌎', title: { en: 'Latin America Trade', es: 'Comercio América Latina' }, desc: { en: '10 tools: Search, Pricing, Buyers, Finance, Logistics, AI, Compliance, Maps', es: '10 herramientas: Búsqueda, Precios, Compradores, Finanzas, Logística, IA, Cumplimiento, Mapas' }, price: 'Free' },
-    { id: 'factoring', icon: '💰', title: { en: 'Trade Finance', es: 'Financiamiento Comercial' }, desc: { en: 'AI-powered factoring, risk scoring, auto-approval, invoice management', es: 'Factoraje IA, puntuación riesgo, aprobación automática, gestión facturas' }, price: 'Variable' }
+    { 
+      id: 'cm-products', 
+      icon: '🌾', 
+      title: { en: 'CM Products International', es: 'CM Products International' }, 
+      desc: { en: 'AI market intelligence, 5-year trends, grower registry, Google Calendar integration, Zadarma VoIP', es: 'Inteligencia IA, tendencias 5 años, registro productores, integración Google Calendar, Zadarma VoIP' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'unified-sourcing', 
+      icon: '🎯', 
+      title: { en: 'Unified Sourcing Engine', es: 'Motor de Abastecimiento Unificado' }, 
+      desc: { en: 'Layered sourcing: Direct Growers → Suppliers • Dual PO system protects your sources • Profit margin analysis', es: 'Abastecimiento por capas: Productores → Proveedores • Sistema PO dual protege fuentes • Análisis márgenes' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'grower-intel', 
+      icon: '🕵️', 
+      title: { en: 'Grower Intelligence', es: 'Inteligencia de Productores' }, 
+      desc: { en: 'FBI-level vetting • USDA/FDA/SENASICA verification • Risk scoring • Certification tracking', es: 'Investigación nivel FBI • Verificación USDA/FDA/SENASICA • Puntuación riesgo • Rastreo certificaciones' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'produce-intel', 
+      icon: '🥑', 
+      title: { en: 'Produce Intelligence', es: 'Inteligencia de Productos' }, 
+      desc: { en: 'Professional charts, 30-day trends, 5-year analysis, multi-commodity comparison', es: 'Gráficos profesionales, tendencias 30 días, análisis 5 años, comparación multi-producto' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'produce-analytics', 
+      icon: '📊', 
+      title: { en: 'Produce Analytics', es: 'Análisis de Productos' }, 
+      desc: { en: 'AI price prediction, demand forecasting, trend analysis', es: 'Predicción precios IA, pronóstico demanda, análisis tendencias' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'produce-po', 
+      icon: '📝', 
+      title: { en: 'Purchase Order', es: 'Orden de Compra' }, 
+      desc: { en: 'Smart pricing, auto-fill, compliance checking', es: 'Precios inteligentes, autocompletado, verificación cumplimiento' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'traceability', 
+      icon: '🔗', 
+      title: { en: 'Traceability AI', es: 'Trazabilidad IA' }, 
+      desc: { en: 'QR codes, blockchain verification, supply chain tracking', es: 'Códigos QR, verificación blockchain, seguimiento cadena suministro' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'supplier-intel', 
+      icon: '🏢', 
+      title: { en: 'Supplier Intelligence', es: 'Inteligencia Proveedores' }, 
+      desc: { en: 'Supplier scoring, risk assessment, smart contacts, performance tracking', es: 'Puntuación proveedores, evaluación riesgos, contactos inteligentes' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'food-safety', 
+      icon: '🛡️', 
+      title: { en: 'Food Safety', es: 'Seguridad Alimentaria' }, 
+      desc: { en: 'HACCP, certifications, CAPA, lab results, compliance audits', es: 'HACCP, certificaciones, CAPA, resultados laboratorio, auditorías' }, 
+      price: '$299' 
+    },
+    { 
+      id: 'water-tech', 
+      icon: '💧', 
+      title: { en: 'Water Analysis', es: 'Análisis de Agua' }, 
+      desc: { en: 'AI analysis 150+ parameters, EPA/WHO compliance verification', es: 'Análisis IA 150+ parámetros, verificación EPA/WHO' }, 
+      price: '$149' 
+    },
+    { 
+      id: 'soil', 
+      icon: '🌱', 
+      title: { en: 'Soil Analysis', es: 'Análisis de Suelo' }, 
+      desc: { en: 'NPK, pH, organic matter, micronutrients, heavy metals', es: 'NPK, pH, materia orgánica, micronutrientes, metales pesados' }, 
+      price: '$149' 
+    },
+    { 
+      id: 'growers', 
+      icon: '🚜', 
+      title: { en: 'Grower Portal', es: 'Portal Productores' }, 
+      desc: { en: 'Harvest scheduling, freight calculator, GPS tracking, insurance, real-time logistics', es: 'Programación cosechas, calculadora flete, rastreo GPS, seguros, logística tiempo real' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'latin-america', 
+      icon: '🌎', 
+      title: { en: 'Latin America Trade', es: 'Comercio América Latina' }, 
+      desc: { en: '10 tools: Search, Pricing, Buyers, Finance, Logistics, AI, Compliance, Maps', es: '10 herramientas: Búsqueda, Precios, Compradores, Finanzas, Logística, IA, Cumplimiento, Mapas' }, 
+      price: 'Free' 
+    },
+    { 
+      id: 'factoring', 
+      icon: '💰', 
+      title: { en: 'Trade Finance', es: 'Financiamiento Comercial' }, 
+      desc: { en: 'AI-powered factoring, risk scoring, auto-approval, invoice management', es: 'Factoraje IA, puntuación riesgo, aprobación automática, gestión facturas' }, 
+      price: 'Variable' 
+    }
   ];
 
   return (

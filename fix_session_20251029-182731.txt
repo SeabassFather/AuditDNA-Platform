@@ -1,0 +1,412 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20251029182731
+Username: MFGIINC\Mexausa
+RunAs User: MFGIINC\Mexausa
+Configuration Name: 
+Machine: MFGIINC (Microsoft Windows NT 10.0.26100.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 4304
+PSVersion: 5.1.26100.6725
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.6725
+BuildVersion: 10.0.26100.6725
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is .\fix_session_20251029-182731.txt
+Backed up src/index.js -> src\index.js.bak_20251029-182731
+
+WROTE src/index.js; showing top 20 lines:
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+// If you have CSS or index.scss, import it here (uncomment if needed)
+// import "./index.css";
+
+const rootEl = document.getElementById("root");
+if (!rootEl) {
+  throw new Error(
+    'Root element not found: add <div id="root"></div> to your index.html'
+  );
+}
+
+const root = ReactDOM.createRoot(rootEl);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+git : error: pathspec 'frontend/index.html' did not match any file(s) known to git
+At line:45 char:1
++ git restore --staged "frontend/index.html" 2>$null
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error: pathspec...s) known to git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+git : error: pathspec 'frontend/public/index.html' did not match any file(s) known to git
+At line:46 char:1
++ git restore --staged "frontend/public/index.html" 2>$null
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error: pathspec...s) known to git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+Unstaged changes after reset:
+M       .env
+M       .eslintrc.json
+M       .gitignore
+M       MexicoLoanMatcher.jsx
+M       README.md
+T       docs
+M       netlify.toml
+M       package-lock.json
+M       postcss.config.js
+M       public/index.html
+M       src/App.css
+M       src/App.js
+M       src/App.jsx
+M       src/api.js
+M       src/components/AgentRegistrationCard.jsx
+M       src/components/AgentRegistrationForm.jsx
+M       src/components/App.js
+M       src/components/AppraisalServicesCard.jsx
+M       src/components/AuditProcessInfo.jsx
+M       src/components/ContactCard.jsx
+M       src/components/Dashboard.js
+M       src/components/DashboardCard.css
+M       src/components/DocumentUploader.jsx
+M       src/components/DynamicAuditModule.jsx
+M       src/components/FacialRecognition.jsx
+M       src/components/Footer.js
+M       src/components/Footer.jsx
+M       src/components/GrowerProfileModal.jsx
+M       src/components/LegalQuestionnaireCard.jsx
+M       src/components/MexicoRealEstate.jsx
+M       src/components/MexicoRefiCard.jsx
+M       src/components/MortgageTabUS.jsx
+M       src/components/OwnerBuyerForm.jsx
+M       src/components/PropertyListings.jsx
+M       src/components/PropertySearch.jsx
+M       src/components/RateTicker.jsx
+M       src/components/ReferralPartnerCard.jsx
+M       src/components/Scanner.jsx
+M       src/components/SearchEngines.js
+M       src/components/ServiceDrawer.jsx
+M       src/components/ServiceRequestCard.jsx
+M       src/components/Services.jsx
+M       src/components/ServicesAndCompliancePage.jsx
+M       src/components/ServicesComplianceAccordion.jsx
+M       src/components/ServicesTab.js
+M       src/components/ShortForm1003Sidebar.js
+M       src/components/SupplierIntelligenceCard.jsx
+M       src/components/TopRibbonTicker.jsx
+M       src/components/agricultureServices.js
+M       src/components/mortgageServices.js
+M       src/components/produceTop100.js
+M       src/components/servciesData.js
+M       src/components/serviceData.js
+M       src/components/serviceDetails.js
+M       src/config/db.js
+M       src/data/AuditDNAServiceCatalog.jsx
+M       src/data/Services.js
+M       src/data/agriTests.json
+M       src/data/cropsTaxonomy.js
+M       src/data/growerDatabase.js
+M       src/data/services.json
+M       src/data/services/agricultureServices.js
+M       src/data/services/mortgageServices.js
+M       src/data/services/serviceDetails.js
+M       src/data/services/servicesData.js
+M       src/data/servicesExpanded.json
+M       src/data/servicesMegaCatalog.json
+M       src/data/spartan_services.json
+M       src/data/waterSoilTests.json
+M       src/data/waterSources.json
+M       src/features/ag/AgMarket.jsx.bak.20250821145640
+M       src/features/ag/AgMarket.jsx.bak.20250821145823
+M       src/features/ag/AgMarket.jsx.bak.20250821150410
+M       src/features/ag/AgMarket.jsx.bak.20250821150525
+M       src/features/ag/AgMarket.jsx.bak.20250821150655
+M       src/features/ag/AgMarket.jsx.bak.20250821150925
+M       src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+M       src/features/docusign/DocuSignPanel.jsx
+M       src/features/files/FileUpload.jsx
+M       src/i18n/I18nProvider.jsx
+M       src/i18n/useI18n.js
+M       src/index.css
+M       src/index.js
+M       src/lib/Uploads.js
+M       src/lib/api.js
+M       src/lib/services/agriculture.json
+M       src/lib/services/compliance.json
+M       src/pages/Admin.js
+M       src/pages/Admin.jsx
+M       src/pages/AdminDashboard.jsx
+M       src/pages/AgExplorer.jsx
+M       src/pages/AgMarketSearchPage.jsx
+M       src/pages/AgMarketplace.jsx
+M       src/pages/AgentDashboard.jsx
+M       src/pages/AgentRegistration.jsx
+M       src/pages/AuditCatalogPage.jsx
+M       src/pages/AuditDNAApp.jsx
+M       src/pages/AuditDNAPage.jsx
+M       src/pages/AuditDNAServiceCatalog.jsx
+M       src/pages/CasesPage.jsx
+M       src/pages/CommissionAgreement.jsx
+M       src/pages/Compliance.jsx
+M       src/pages/ConstructionProjectCard.jsx
+M       src/pages/ContactCard.jsx
+M       src/pages/Dashboard.jsx
+M       src/pages/DocumentUploader.jsx
+M       src/pages/Factoring.jsx
+M       src/pages/FileUploads.jsx
+M       src/pages/FiveVerificationEngines.jsx
+M       src/pages/Home.jsx
+M       src/pages/MexicoLoans.jsx
+M       src/pages/MexicoRefiCard.jsx
+M       src/pages/Mortgage.jsx
+M       src/pages/MortgageSearchEngine.jsx
+M       src/pages/MortgageTabMexico.jsx
+M       src/pages/MortgageTabRealEstate.jsx
+M       src/pages/MortgageTabRealEstate.jsx.backup
+M       src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+M       src/pages/MortgageTabUS.jsx
+M       src/pages/NotificationCenter.jsx
+M       src/pages/OwnerBuyerForm.jsx
+M       src/pages/OwnerContactCard.jsx
+M       src/pages/PitchDeckPage.jsx
+M       src/pages/PropertySearch.jsx
+M       src/pages/PropertyUploadForm.jsx
+M       src/pages/Search.jsx
+M       src/pages/ServiceCategoryDetail.jsx
+M       src/pages/ServiceDetail.jsx
+M       src/pages/Services.jsx.backup
+M       src/pages/ServicesExplorer.jsx
+M       src/pages/Ticker.js
+M       src/pages/TradeFinance.jsx
+M       src/pages/TradePortal.js
+M       src/pages/USDA.jsx
+M       src/pages/USDA.jsx.bak.20250929-173344
+M       src/pages/USDAGrowerSearchEngine.jsx
+M       src/pages/USDAMarketplace.jsx
+M       src/pages/WaterTech.jsx
+M       src/pages/footer.jsx
+M       src/pages/marketpricespage.jsx
+M       src/pages/navbar.jsx
+D       src/pages/netlify.toml
+M       src/pages/producemarketpie.jsx
+M       src/pages/producepricechart.jsx
+M       src/pages/producetrendpage.jsx
+M       src/pages/producetrendsall.jsx
+M       src/pages/searchenginessection.jsx
+M       src/pages/servicepage.jsx
+M       src/pages/topnav.jsx
+M       src/services/services.json
+M       src/services/waterService.js
+M       src/utils/agMarketplaceAPI.js
+M       src/utils/aiMatchmaking.js
+M       src/utils/api.js
+M       src/utils/auth.js
+M       src/utils/tradeFinanceAPI.js
+M       tailwind.config.js
+Unstaged changes after reset:
+M       .env
+M       .eslintrc.json
+M       .gitignore
+M       MexicoLoanMatcher.jsx
+M       README.md
+T       docs
+M       netlify.toml
+M       package-lock.json
+M       postcss.config.js
+M       public/index.html
+M       src/App.css
+M       src/App.js
+M       src/App.jsx
+M       src/api.js
+M       src/components/AgentRegistrationCard.jsx
+M       src/components/AgentRegistrationForm.jsx
+M       src/components/App.js
+M       src/components/AppraisalServicesCard.jsx
+M       src/components/AuditProcessInfo.jsx
+M       src/components/ContactCard.jsx
+M       src/components/Dashboard.js
+M       src/components/DashboardCard.css
+M       src/components/DocumentUploader.jsx
+M       src/components/DynamicAuditModule.jsx
+M       src/components/FacialRecognition.jsx
+M       src/components/Footer.js
+M       src/components/Footer.jsx
+M       src/components/GrowerProfileModal.jsx
+M       src/components/LegalQuestionnaireCard.jsx
+M       src/components/MexicoRealEstate.jsx
+M       src/components/MexicoRefiCard.jsx
+M       src/components/MortgageTabUS.jsx
+M       src/components/OwnerBuyerForm.jsx
+M       src/components/PropertyListings.jsx
+M       src/components/PropertySearch.jsx
+M       src/components/RateTicker.jsx
+M       src/components/ReferralPartnerCard.jsx
+M       src/components/Scanner.jsx
+M       src/components/SearchEngines.js
+M       src/components/ServiceDrawer.jsx
+M       src/components/ServiceRequestCard.jsx
+M       src/components/Services.jsx
+M       src/components/ServicesAndCompliancePage.jsx
+M       src/components/ServicesComplianceAccordion.jsx
+M       src/components/ServicesTab.js
+M       src/components/ShortForm1003Sidebar.js
+M       src/components/SupplierIntelligenceCard.jsx
+M       src/components/TopRibbonTicker.jsx
+M       src/components/agricultureServices.js
+M       src/components/mortgageServices.js
+M       src/components/produceTop100.js
+M       src/components/servciesData.js
+M       src/components/serviceData.js
+M       src/components/serviceDetails.js
+M       src/config/db.js
+M       src/data/AuditDNAServiceCatalog.jsx
+M       src/data/Services.js
+M       src/data/agriTests.json
+M       src/data/cropsTaxonomy.js
+M       src/data/growerDatabase.js
+M       src/data/services.json
+M       src/data/services/agricultureServices.js
+M       src/data/services/mortgageServices.js
+M       src/data/services/serviceDetails.js
+M       src/data/services/servicesData.js
+M       src/data/servicesExpanded.json
+M       src/data/servicesMegaCatalog.json
+M       src/data/spartan_services.json
+M       src/data/waterSoilTests.json
+M       src/data/waterSources.json
+M       src/features/ag/AgMarket.jsx.bak.20250821145640
+M       src/features/ag/AgMarket.jsx.bak.20250821145823
+M       src/features/ag/AgMarket.jsx.bak.20250821150410
+M       src/features/ag/AgMarket.jsx.bak.20250821150525
+M       src/features/ag/AgMarket.jsx.bak.20250821150655
+M       src/features/ag/AgMarket.jsx.bak.20250821150925
+M       src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+M       src/features/docusign/DocuSignPanel.jsx
+M       src/features/files/FileUpload.jsx
+M       src/i18n/I18nProvider.jsx
+M       src/i18n/useI18n.js
+M       src/index.css
+M       src/index.js
+M       src/lib/Uploads.js
+M       src/lib/api.js
+M       src/lib/services/agriculture.json
+M       src/lib/services/compliance.json
+M       src/pages/Admin.js
+M       src/pages/Admin.jsx
+M       src/pages/AdminDashboard.jsx
+M       src/pages/AgExplorer.jsx
+M       src/pages/AgMarketSearchPage.jsx
+M       src/pages/AgMarketplace.jsx
+M       src/pages/AgentDashboard.jsx
+M       src/pages/AgentRegistration.jsx
+M       src/pages/AuditCatalogPage.jsx
+M       src/pages/AuditDNAApp.jsx
+M       src/pages/AuditDNAPage.jsx
+M       src/pages/AuditDNAServiceCatalog.jsx
+M       src/pages/CasesPage.jsx
+M       src/pages/CommissionAgreement.jsx
+M       src/pages/Compliance.jsx
+M       src/pages/ConstructionProjectCard.jsx
+M       src/pages/ContactCard.jsx
+M       src/pages/Dashboard.jsx
+M       src/pages/DocumentUploader.jsx
+M       src/pages/Factoring.jsx
+M       src/pages/FileUploads.jsx
+M       src/pages/FiveVerificationEngines.jsx
+M       src/pages/Home.jsx
+M       src/pages/MexicoLoans.jsx
+M       src/pages/MexicoRefiCard.jsx
+M       src/pages/Mortgage.jsx
+M       src/pages/MortgageSearchEngine.jsx
+M       src/pages/MortgageTabMexico.jsx
+M       src/pages/MortgageTabRealEstate.jsx
+M       src/pages/MortgageTabRealEstate.jsx.backup
+M       src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+M       src/pages/MortgageTabUS.jsx
+M       src/pages/NotificationCenter.jsx
+M       src/pages/OwnerBuyerForm.jsx
+M       src/pages/OwnerContactCard.jsx
+M       src/pages/PitchDeckPage.jsx
+M       src/pages/PropertySearch.jsx
+M       src/pages/PropertyUploadForm.jsx
+M       src/pages/Search.jsx
+M       src/pages/ServiceCategoryDetail.jsx
+M       src/pages/ServiceDetail.jsx
+M       src/pages/Services.jsx.backup
+M       src/pages/ServicesExplorer.jsx
+M       src/pages/Ticker.js
+M       src/pages/TradeFinance.jsx
+M       src/pages/TradePortal.js
+M       src/pages/USDA.jsx
+M       src/pages/USDA.jsx.bak.20250929-173344
+M       src/pages/USDAGrowerSearchEngine.jsx
+M       src/pages/USDAMarketplace.jsx
+M       src/pages/WaterTech.jsx
+M       src/pages/footer.jsx
+M       src/pages/marketpricespage.jsx
+M       src/pages/navbar.jsx
+D       src/pages/netlify.toml
+M       src/pages/producemarketpie.jsx
+M       src/pages/producepricechart.jsx
+M       src/pages/producetrendpage.jsx
+M       src/pages/producetrendsall.jsx
+M       src/pages/searchenginessection.jsx
+M       src/pages/servicepage.jsx
+M       src/pages/topnav.jsx
+M       src/services/services.json
+M       src/services/waterService.js
+M       src/utils/agMarketplaceAPI.js
+M       src/utils/aiMatchmaking.js
+M       src/utils/api.js
+M       src/utils/auth.js
+M       src/utils/tradeFinanceAPI.js
+M       tailwind.config.js
+warning: in the working copy of 'src/index.js', LF will be replaced by CRLF the next time Git touches it
+
+==> GIT COMMIT OUTPUT:
+[fix-nested-frontend-20251029-171531 69b5f8c] fix(index): remove merge markers and restore valid src/index.js  1 file changed, 12 insertions(+), 3 deletions(-)
+
+==> Pushing branch fix-nested-frontend-20251029-171531
+git: 'credential-manager-core' is not a git command. See 'git --help'. branch 'fix-nested-frontend-20251029-171531' set up to track 'origin/fix-nested-frontend-20251029-171531'. To https://github.com/SeabassFather/audit-frontend.git    d8de8f4..69b5f8c  fix-nested-frontend-20251029-171531 -> fix-nested-frontend-20251029-171531
+
+==> Running npm install (logs -> npm_install_20251029-182731.log)
+
+up to date, audited 1371 packages in 8s
+
+10 vulnerabilities (3 moderate, 7 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+==> Starting app with npm start (logs -> npm_start_20251029-182731.log). Keep this window open.
+PS C:\AuditDNA\AuditDNA_Supreme_Frontend\frontend> TerminatingError(Start-Process): "This command cannot be run due to the error: %1 is not a valid Win32 application."
+Start-Process : This command cannot be run due to the error: %1 is not a valid Win32 application.
+At line:81 char:1
++ Start-Process -FilePath "npm" -ArgumentList "start" -NoNewWindow
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (:) [Start-Process], InvalidOperationException
+    + FullyQualifiedErrorId : InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand
+Start-Process : This command cannot be run due to the error: %1 is not a valid Win32 application.
+At line:81 char:1
++ Start-Process -FilePath "npm" -ArgumentList "start" -NoNewWindow
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (:) [Start-Process], InvalidOperationException
+    + FullyQualifiedErrorId : InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand
+
+
+Script finished. Transcript file: .\fix_session_20251029-182731.txt
+**********************
+Windows PowerShell transcript end
+End time: 20251029182746
+**********************

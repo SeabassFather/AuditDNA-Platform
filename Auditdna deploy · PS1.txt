@@ -1,0 +1,410 @@
+# ============================================
+# AuditDNA Complete Deployment Script
+# Run in PowerShell as Administrator
+# ============================================
+
+$projectPath = "C:\AuditDNA\AUDIT_DNA_Frontend_Final\frontend\src"
+
+Write-Host ""
+Write-Host "🚀 AUDITDNA DEPLOYMENT STARTING..." -ForegroundColor Cyan
+Write-Host "📁 Target: $projectPath" -ForegroundColor Yellow
+Write-Host ""
+
+# Create directory if not exists
+if (-not (Test-Path $projectPath)) {
+    New-Item -ItemType Directory -Path $projectPath -Force | Out-Null
+    Write-Host "✅ Created src directory" -ForegroundColor Green
+}
+
+# ========== FILE 1: ProduceAnalyticsPanel.jsx ==========
+Write-Host "Creating ProduceAnalyticsPanel.jsx..." -ForegroundColor Cyan
+$ProduceAnalyticsPanel = @'
+import React, { useEffect, useState } from "react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
+
+const USDA_API_KEY = "4F158DB1-85C2-3243-BFFA-58B53FB40D23";
+
+export default function ProduceAnalyticsPanel({ commodity }) {
+  const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchUSDA() {
+      if (!commodity) return;
+      setLoading(true);
+      try {
+        const resp = await fetch(
+          `https://quickstats.nass.usda.gov/api/api_GET/?key=${USDA_API_KEY}&source_desc=MARKET&sector_desc=VEGETABLES&commodity_desc=${commodity.toUpperCase()}&year__GE=2020&agg_level_desc=STATE`
+        );
+        const data = await resp.json();
+        const byYear = {};
+        if (data.data) {
+          data.data.forEach((r) => {
+            const y = r.year;
+            const price = parseFloat(r.Value?.replace(/,/g, "")) || 0;
+            if (!byYear[y]) byYear[y] = { year: y, West: 0, Midwest: 0, East: 0, countW:0, countM:0, countE:0 };
+            const region = getRegionFromState(r.state_name);
+            if (region === "West") { byYear[y].West += price; byYear[y].countW++; }
+            if (region === "Midwest") { byYear[y].Midwest += price; byYear[y].countM++; }
+            if (region === "East") { byYear[y].East += price; byYear[y].countE++; }
+          });
+          const arr = Object.values(byYear).map((y) => ({
+            year: y.year,
+            West: y.countW ? +(y.West / y.countW).toFixed(2) : null,
+            Midwest: y.countM ? +(y.Midwest / y.countM).toFixed(2) : null,
+            East: y.countE ? +(y.East / y.countE).toFixed(2) : null,
+          }));
+          setChartData(arr.sort((a, b) => a.year - b.year));
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load USDA data");
+      }
+      setLoading(false);
+    }
+    fetchUSDA();
+  }, [commodity]);
+
+  function getRegionFromState(state) {
+    const west = ["CA","WA","OR","AZ","NV","NM","CO","UT","ID"];
+    const midwest = ["IL","IN","IA","KS","MI","MN","MO","NE","ND","OH","SD","WI"];
+    const east = ["NY","PA","NJ","VA","NC","SC","GA","FL","MA","CT","MD","ME"];
+    if (west.includes(state)) return "West";
+    if (midwest.includes(state)) return "Midwest";
+    return "East";
+  }
+
+  if (loading) return <p style={{ color: '#fff', textAlign: 'center', padding: '2rem' }}>Loading USDA data...</p>;
+  if (error) return <p style={{ color: '#ef4444', textAlign: 'center', padding: '2rem' }}>{error}</p>;
+  if (!chartData.length) return <p style={{ color: '#94a3b8', textAlign: 'center', padding: '2rem' }}>No data available for {commodity}</p>;
+
+  return (
+    <div style={{ background: 'rgba(30, 41, 59, 0.8)', padding: '2rem', borderRadius: '20px', border: '2px solid rgba(6, 182, 212, 0.3)' }}>
+      <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#06b6d4', marginBottom: '1.5rem' }}>
+        📊 {commodity} Regional USDA Price Trend
+      </h2>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+          <XAxis dataKey="year" stroke="#94a3b8" />
+          <YAxis stroke="#94a3b8" />
+          <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }} />
+          <Legend />
+          <Line type="monotone" dataKey="West" stroke="#06b6d4" strokeWidth={3} />
+          <Line type="monotone" dataKey="Midwest" stroke="#10b981" strokeWidth={3} />
+          <Line type="monotone" dataKey="East" stroke="#f59e0b" strokeWidth={3} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+'@
+Set-Content -Path "$projectPath\ProduceAnalyticsPanel.jsx" -Value $ProduceAnalyticsPanel -Encoding UTF8
+Write-Host "✅ ProduceAnalyticsPanel.jsx created" -ForegroundColor Green
+
+# ========== FILE 2: ProducePOForm.jsx ==========
+Write-Host "Creating ProducePOForm.jsx..." -ForegroundColor Cyan
+$ProducePOForm = @'
+import React, { useState } from "react";
+import jsPDF from "jspdf";
+
+export default function ProducePOForm({ onNext }) {
+  const [poData, setPoData] = useState({
+    buyer: "",
+    seller: "Mexausa Food Group",
+    commodity: "",
+    variety: "",
+    packaging: "",
+    quantityBoxes: 0,
+    unitPrice: 0,
+    terms: "FOB Origin",
+  });
+
+  const handleGeneratePO = () => {
+    const poId = "PO-" + new Date().getFullYear() + "-" + Math.floor(Math.random() * 9999);
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("PURCHASE ORDER", 14, 20);
+    doc.setFontSize(11);
+    doc.text(`PO ID: ${poId}`, 14, 30);
+    Object.entries(poData).forEach(([k, v], i) => {
+      doc.text(`${k}: ${v}`, 14, 40 + i * 7);
+    });
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 90);
+    doc.save(`${poId}.pdf`);
+    alert(`✅ Purchase Order ${poId} generated!`);
+    if (onNext) onNext();
+  };
+
+  return (
+    <div style={{ maxWidth: '1000px', margin: '0 auto', background: 'rgba(30, 41, 59, 0.8)', padding: '2rem', borderRadius: '20px', border: '2px solid rgba(6, 182, 212, 0.3)' }}>
+      <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#06b6d4', marginBottom: '1.5rem' }}>📄 Create Purchase Order (PO)</h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        {Object.keys(poData).map((key) => (
+          <div key={key}>
+            <label style={{ display: 'block', fontWeight: 'bold', color: '#94a3b8', marginBottom: '0.5rem', textTransform: 'capitalize' }}>{key.replace(/([A-Z])/g, ' $1')}</label>
+            <input
+              style={{ width: '100%', padding: '0.75rem', border: '2px solid #334155', borderRadius: '8px', background: '#1e293b', color: '#fff', fontSize: '1rem' }}
+              value={poData[key]}
+              onChange={(e) => setPoData({ ...poData, [key]: e.target.value })}
+            />
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={handleGeneratePO}
+        style={{ width: '100%', padding: '1.25rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '1.3rem', fontWeight: 'bold', cursor: 'pointer' }}
+      >
+        🎯 Generate Purchase Order PDF
+      </button>
+    </div>
+  );
+}
+'@
+Set-Content -Path "$projectPath\ProducePOForm.jsx" -Value $ProducePOForm -Encoding UTF8
+Write-Host "✅ ProducePOForm.jsx created" -ForegroundColor Green
+
+# ========== FILE 3: FactoringDashboard.jsx ==========
+Write-Host "Creating FactoringDashboard.jsx..." -ForegroundColor Cyan
+$FactoringDashboard = @'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+export default function FactoringDashboard() {
+  const [records, setRecords] = useState([]);
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async (searchTerm = '') => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`http://localhost:5050/api/factoring/search?query=${searchTerm}`);
+      setRecords(response.data || []);
+    } catch (err) {
+      console.error('Backend not available, using mock data');
+      setRecords([
+        { client: 'Mexausa Food Group', invoice: 'INV-2025-001', po: 'PO-2025-123', amount: 45000, rate: 2.5, term: '30 days', status: 'Approved' },
+        { client: 'Fresh Produce Ltd', invoice: 'INV-2025-002', po: 'PO-2025-124', amount: 32000, rate: 3.0, term: '45 days', status: 'Pending' },
+        { client: 'California Berry Farms', invoice: 'INV-2025-003', po: 'PO-2025-125', amount: 28000, rate: 2.8, term: '30 days', status: 'Approved' }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return (
+    <div style={{ maxWidth: '1400px', margin: '0 auto', background: 'rgba(30, 41, 59, 0.8)', padding: '2rem', borderRadius: '20px', border: '2px solid rgba(6, 182, 212, 0.3)' }}>
+      <h2 style={{ color: '#06b6d4', marginBottom: '1.5rem', fontSize: '2.5rem', fontWeight: 'bold' }}>💰 Factoring & Trade Finance Engine</h2>
+      <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem' }}>
+        <input
+          type="text"
+          placeholder="Search by client, invoice #, PO ID..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{ flex: 1, padding: '1rem', border: '2px solid #334155', borderRadius: '10px', background: '#1e293b', color: '#fff', fontSize: '1rem' }}
+        />
+        <button onClick={() => fetchData(query)} style={{ padding: '1rem 2rem', background: '#06b6d4', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>
+          🔍 Search
+        </button>
+      </div>
+
+      {loading ? (
+        <p style={{ color: '#94a3b8', textAlign: 'center', padding: '2rem' }}>Loading data...</p>
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' }}>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>Client</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>Invoice #</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>PO ID</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>Amount</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>Rate %</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>Term</th>
+                <th style={{ padding: '1rem', textAlign: 'left', color: 'white', fontWeight: 'bold' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {records.length > 0 ? (
+                records.map((r, i) => (
+                  <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(6, 182, 212, 0.1)' : 'transparent', borderBottom: '1px solid #334155' }}>
+                    <td style={{ padding: '1rem', color: '#fff' }}>{r.client}</td>
+                    <td style={{ padding: '1rem', color: '#94a3b8' }}>{r.invoice || '-'}</td>
+                    <td style={{ padding: '1rem', color: '#94a3b8' }}>{r.po || '-'}</td>
+                    <td style={{ padding: '1rem', color: '#10b981', fontWeight: 'bold' }}>${r.amount?.toLocaleString() || '0'}</td>
+                    <td style={{ padding: '1rem', color: '#fff' }}>{r.rate || '-'}%</td>
+                    <td style={{ padding: '1rem', color: '#fff' }}>{r.term || '-'}</td>
+                    <td style={{ padding: '1rem', color: r.status === 'Approved' ? '#10b981' : '#f59e0b', fontWeight: 'bold' }}>{r.status}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>No results found.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+'@
+Set-Content -Path "$projectPath\FactoringDashboard.jsx" -Value $FactoringDashboard -Encoding UTF8
+Write-Host "✅ FactoringDashboard.jsx created" -ForegroundColor Green
+
+# ========== FILE 4: CartSummary.jsx ==========
+Write-Host "Creating CartSummary.jsx..." -ForegroundColor Cyan
+$CartSummary = @'
+import React from "react";
+import { useCart } from "./CartContext";
+
+export default function CartSummary() {
+  const { cart, getTotal } = useCart();
+  
+  return (
+    <div style={{ background: 'rgba(30, 41, 59, 0.8)', border: '2px solid rgba(6, 182, 212, 0.3)', borderRadius: '15px', padding: '1.5rem', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#06b6d4' }}>🛒 Cart</div>
+          <div style={{ color: '#94a3b8', marginTop: '0.25rem' }}>{cart.length} items</div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '0.9rem', color: '#94a3b8' }}>Subtotal</div>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>${getTotal().toFixed(2)}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+'@
+Set-Content -Path "$projectPath\CartSummary.jsx" -Value $CartSummary -Encoding UTF8
+Write-Host "✅ CartSummary.jsx created" -ForegroundColor Green
+
+# ========== FILE 5: WaterResultsAnalysis.jsx ==========
+Write-Host "Creating WaterResultsAnalysis.jsx..." -ForegroundColor Cyan
+$WaterResultsAnalysis = @'
+import React, { useState } from 'react';
+
+export default function WaterResultsAnalysis() {
+  const [language, setLanguage] = useState('en');
+
+  const analysisResults = [
+    { parameter: 'pH', value: 8.7, unit: 'pH units', status: 'warning', limit: '6.5-8.5', recommendation: 'pH slightly elevated. Monitor for scaling.' },
+    { parameter: 'TDS', value: 620, unit: 'mg/L', status: 'fail', limit: '<500', recommendation: 'TDS exceeds EPA limits. Risk of soil salinization.' },
+    { parameter: 'Nitrate-N', value: 8.2, unit: 'mg/L', status: 'pass', limit: '<10', recommendation: 'Within safe limits.' },
+    { parameter: 'Lead', value: 18, unit: 'µg/L', status: 'fail', limit: '<15', recommendation: 'CRITICAL: Lead exceeds EPA action level. DO NOT USE.' },
+    { parameter: 'Total Coliform', value: 0, unit: 'CFU/100mL', status: 'pass', limit: '0', recommendation: 'Microbiologically safe.' },
+    { parameter: 'E. coli', value: 0, unit: 'CFU/100mL', status: 'pass', limit: '0', recommendation: 'No fecal contamination.' },
+  ];
+
+  const statusCounts = {
+    pass: analysisResults.filter(r => r.status === 'pass').length,
+    warning: analysisResults.filter(r => r.status === 'warning').length,
+    fail: analysisResults.filter(r => r.status === 'fail').length
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '2rem' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ background: 'white', borderRadius: '20px', padding: '2rem', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h1 style={{ fontSize: '2.5rem', color: '#2d3748' }}>💧 Water Test Results Analysis</h1>
+            <button onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} style={{ padding: '0.75rem 1.5rem', background: '#667eea', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+              {language === 'en' ? 'ES' : 'EN'}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+          <div style={{ background: 'white', borderRadius: '15px', padding: '2rem' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#10b981' }}>{statusCounts.pass}</div>
+            <div style={{ color: '#718096' }}>Passed</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: '15px', padding: '2rem' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#f59e0b' }}>{statusCounts.warning}</div>
+            <div style={{ color: '#718096' }}>Warnings</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: '15px', padding: '2rem' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 'bold', color: '#ef4444' }}>{statusCounts.fail}</div>
+            <div style={{ color: '#718096' }}>Failed</div>
+          </div>
+        </div>
+
+        {statusCounts.fail > 0 && (
+          <div style={{ background: '#fee2e2', border: '3px solid #ef4444', borderRadius: '20px', padding: '2rem', marginBottom: '2rem' }}>
+            <h3 style={{ color: '#991b1b', fontSize: '1.5rem', marginBottom: '0.5rem' }}>⚠️ CRITICAL ISSUES DETECTED</h3>
+            <p style={{ color: '#7f1d1d' }}>Your water sample has failed critical parameters. Immediate action required.</p>
+          </div>
+        )}
+
+        <div style={{ background: 'white', borderRadius: '20px', overflow: 'hidden', marginBottom: '2rem' }}>
+          <div style={{ padding: '2rem', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+            <h2 style={{ fontSize: '2rem', color: 'white' }}>🤖 AI Analysis Results</h2>
+          </div>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead style={{ background: '#f7fafc' }}>
+              <tr>
+                <th style={{ padding: '1rem', textAlign: 'left' }}>Parameter</th>
+                <th style={{ padding: '1rem', textAlign: 'left' }}>Value</th>
+                <th style={{ padding: '1rem', textAlign: 'left' }}>Status</th>
+                <th style={{ padding: '1rem', textAlign: 'left' }}>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {analysisResults.map((result, idx) => {
+                const bgColor = result.status === 'pass' ? '#f0fdf4' : result.status === 'warning' ? '#fefce8' : '#fef2f2';
+                const statusColor = result.status === 'pass' ? '#10b981' : result.status === 'warning' ? '#f59e0b' : '#ef4444';
+                return (
+                  <tr key={idx} style={{ background: bgColor }}>
+                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{result.parameter}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <div style={{ fontWeight: 'bold' }}>{result.value} {result.unit}</div>
+                      <div style={{ fontSize: '0.8rem', color: '#718096' }}>Limit: {result.limit}</div>
+                    </td>
+                    <td style={{ padding: '1rem' }}>
+                      <span style={{ fontWeight: 'bold', color: statusColor }}>{result.status.toUpperCase()}</span>
+                    </td>
+                    <td style={{ padding: '1rem', color: '#4a5568' }}>{result.recommendation}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <button style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', border: 'none', borderRadius: '15px', fontSize: '1.2rem', fontWeight: 'bold', cursor: 'pointer' }}>
+            📥 Download Report
+          </button>
+          <button style={{ padding: '1.5rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '15px', fontSize: '1.2rem', fontWeight: 'bold', cursor: 'pointer' }}>
+            👨‍🔬 Book Expert
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+'@
+Set-Content -Path "$projectPath\WaterResultsAnalysis.jsx" -Value $WaterResultsAnalysis -Encoding UTF8
+Write-Host "✅ WaterResultsAnalysis.jsx created" -ForegroundColor Green
+
+Write-Host ""
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host "✅ ALL 5 FILES CREATED SUCCESSFULLY!" -ForegroundColor Green
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "📁 Files created in: $projectPath" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "🚀 Next steps:" -ForegroundColor Cyan
+Write-Host "   1. Open terminal in: C:\AuditDNA\AUDIT_DNA_Frontend_Final\frontend" -ForegroundColor White
+Write-Host "   2. Run: npm start" -ForegroundColor White
+Write-Host ""
+Write-Host "🎉 DONE! Your app should work now!" -ForegroundColor Green
+Write-Host ""
+'@
+Set-Content -Path "$env:TEMP\AuditDNA_Deploy.ps1" -Value $PowerShellScript -Encoding UTF8
+Write-Host "✅ PowerShell script created at: $env:TEMP\AuditDNA_Deploy.ps1" -ForegroundColor Green

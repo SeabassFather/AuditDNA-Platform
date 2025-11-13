@@ -1,0 +1,404 @@
+﻿=== AUDITDNA AG MODULES CONTENT ===
+
+
+
+========== Agriculture.jsx ==========
+
+import React from "react";
+export default function Agriculture() {
+  return <div className='p-8 text-3xl font-bold'>Agriculture Module Coming Soon!</div>;
+}
+
+
+========== AgricultureDashboard.jsx ==========
+
+import React from "react";
+import FileUpload from "./FileUpload";
+
+export default function AgricultureDashboard() {
+  return (
+    <div className="p-8">
+      {/* Section 1: Headline */}
+      <div className="text-3xl font-bold mb-6">Agriculture & Analytics Dashboard</div>
+      
+      {/* Section 2: Analytics (Coming Soon) */}
+      <div className="bg-slate-100 rounded-xl mb-8 p-6 shadow">
+        <div className="text-2xl font-bold mb-2">Analytics Module</div>
+        <div className="text-lg text-gray-600">Coming Soon!</div>
+      </div>
+
+      {/* Section 3: Ag Search Form */}
+      <div className="bg-white rounded-xl shadow p-6">
+        <div className="text-xl font-bold mb-4">Agriculture Search / Marketplace Match</div>
+        <form
+          style={{
+            background: "#fff",
+            borderRadius: 18,
+            boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+            padding: "2.5rem",
+            minWidth: 340,
+            maxWidth: 900,
+            width: "100%",
+          }}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.2rem" }}>
+            <div>
+              <label>Legal Name</label>
+              <input className="input-main" />
+              <label>DBA</label>
+              <input className="input-main" />
+              <label>Country</label>
+              <input className="input-main" />
+              <label>EIN/RFC</label>
+              <input className="input-main" />
+              <label>DUNS</label>
+              <input className="input-main" />
+              <label>Owners List</label>
+              <input className="input-main" />
+              <label>Years in Biz</label>
+              <input className="input-main" />
+              <label>Location(s)</label>
+              <input className="input-main" />
+              <label>Warehouse Option</label>
+              <select className="input-main">
+                <option>LA Partner</option>
+              </select>
+            </div>
+            <div>
+              <label>Certifications</label>
+              <FileUpload />
+              <label>Products</label>
+              <input className="input-main" />
+              <label>Crop Type</label>
+              <input className="input-main" />
+              <label>Variety</label>
+              <input className="input-main" />
+              <label>Grade/Spec</label>
+              <input className="input-main" />
+              <label>Harvest Window</label>
+              <input className="input-main" />
+              <label>Volume (per week/month)</label>
+              <input className="input-main" />
+              <label>Target Price</label>
+              <input className="input-main" />
+            </div>
+            <div>
+              <label>Buyer Name</label>
+              <input className="input-main" />
+              <label>Buyer Type</label>
+              <select className="input-main">
+                <option>Retail</option>
+                <option>Wholesale</option>
+                <option>Chain</option>
+              </select>
+              <label>PO #</label>
+              <input className="input-main" />
+              <label>PO Value</label>
+              <input className="input-main" />
+              <label>Payment Terms</label>
+              <input className="input-main" />
+              <label>Insurance</label>
+              <FileUpload />
+              <label>Compliance Docs</label>
+              <FileUpload />
+            </div>
+            <div style={{ gridColumn: "1/4", textAlign: "center", marginTop: "1.5rem" }}>
+              <button className="btn-main" type="submit">
+                Search / Match
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+========== USDA.jsx ==========
+
+import React from "react";
+export default function USDA() {
+  return <div className='p-8 text-3xl font-bold'>USDA Module Coming Soon!</div>;
+}
+
+
+========== USDAIntelligenceHeaderAndTabs.jsx ==========
+
+import React, { useState } from 'react';
+import { BarChart3, DollarSign, FileText, Users } from 'lucide-react';
+
+const TABS = [
+  { id: 'pricing', label: 'Live Pricing', icon: <DollarSign className="w-5 h-5" /> },
+  { id: 'reports', label: 'Weekly Reports', icon: <FileText className="w-5 h-5" /> },
+  { id: 'buyers', label: 'Buyers Network', icon: <Users className="w-5 h-5" /> },
+  { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> }
+];
+
+export default function USDAIntelligenceHeaderAndTabs({ activeTab, setActiveTab }) {
+  return (
+    <div className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-700 shadow-xl rounded-t-xl px-8 pt-6 pb-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <img src="/logo.svg" alt="Logo" className="w-12 h-12" />
+          <span className="text-3xl font-extrabold text-white tracking-tight">USDA Intelligence</span>
+        </div>
+        <div className="text-right">
+          <div className="text-lg font-bold text-yellow-300">AuditDNA Platform</div>
+          <div className="text-sm text-blue-200">Boardroom Analytics Module</div>
+        </div>
+      </div>
+
+      <div className="flex gap-2 mt-2">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`
+              flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all
+              shadow-lg
+              ${activeTab === tab.id
+                ? 'bg-gradient-to-r from-yellow-400 via-green-400 to-blue-400 text-gray-900 scale-105'
+                : 'bg-white/20 text-white hover:bg-white/30'}
+            `}
+            style={{ border: activeTab === tab.id ? "2px solid #ffd700" : "none" }}
+          >
+            {tab.icon} {tab.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+========== TraceabilityIntelligence.jsx ==========
+
+import React from 'react'; export default function TraceabilityIntelligence() { return <div>TraceabilityIntelligence loaded</div>; }
+
+
+========== TraceabilityPanel.jsx ==========
+
+import React from 'react';
+import QRCode from 'react-qr-code';
+import { CheckCircle, XCircle, AlertTriangle, Download, Share2, Printer } from 'lucide-react';
+
+export default function TraceabilityPanel({ lots, language }) {
+  const t = {
+    en: {
+      title: "Traceability Intelligence", lot: "Lot", product: "Product", variety: "Variety", region: "Region", size: "Size", pack: "Pack",
+      status: "Status", auditScore: "Audit Score", certifications: "Certifications", chain: "Chain of Title", qr: "QR Code",
+      compliance: "Compliance", tests: "Tests", stages: "Supply Chain Stages", print: "Print", pdf: "Export PDF", email: "Send Email", download: "Download", viewChain: "View Chain"
+    },
+    es: {
+      title: "Inteligencia de Trazabilidad", lot: "Lote", product: "Producto", variety: "Variedad", region: "RegiÃ³n", size: "TamaÃ±o", pack: "Empaque",
+      status: "Estado", auditScore: "PuntuaciÃ³n", certifications: "Certificaciones", chain: "Cadena de TÃ­tulo", qr: "CÃ³digo QR",
+      compliance: "Cumplimiento", tests: "Pruebas", stages: "Etapas de Cadena", print: "Imprimir", pdf: "Exportar PDF", email: "Enviar Email", download: "Descargar", viewChain: "Ver Cadena"
+    }
+  }[language || "en"];
+
+  const getStatusColor = (status) => status === 'VERIFIED' ? '#10b981' : status === 'PENDING' ? '#f59e0b' : '#ef4444';
+
+  return (
+    <div>
+      <h2 className="text-2xl font-bold mb-4 text-green-700">{t.title}</h2>
+      {lots.map((lot, idx) => (
+        <div key={lot.id} className="bg-white rounded-xl p-7 mb-8 shadow-md border border-green-200">
+          <div className="flex flex-wrap gap-8 mb-4 items-center">
+            <div>
+              <h3 className="font-bold text-xl text-green-800">{t.lot}: {lot.id}</h3>
+              <div>{t.product}: <b>{lot.product}</b></div>
+              <div>{t.variety}: <b>{lot.variety}</b></div>
+              <div>{t.region}: <b>{lot.region}</b></div>
+              <div>{t.size}: <b>{lot.size}</b> &mdash; {t.pack}: <b>{lot.pack}</b></div>
+            </div>
+            <div>
+              <span className={`px-4 py-2 rounded-full font-bold text-white`} style={{background:getStatusColor(lot.status)}}>
+                {t.status}: {lot.status}
+              </span>
+              <br />
+              <span className="text-lg font-bold">{t.auditScore}: <b style={{color:getStatusColor(lot.status)}}>{lot.auditScore}/100</b></span>
+            </div>
+            <div>
+              <div className="text-xs font-semibold">{t.certifications}:</div>
+              {[...lot.certifications].map((cert,j) => (
+                <span key={j} className="px-2 py-1 ml-1 mr-1 rounded bg-green-50 border">{cert}</span>
+              ))}
+            </div>
+            <div className="text-center">
+              <QRCode value={lot.qrCodeUrl || ""} size={64} />
+              <div className="text-xs mt-2">{t.qr}</div>
+            </div>
+          </div>
+          <div className="mb-3">
+            <div className="font-bold">{t.stages}:</div>
+            <div className="flex gap-3 flex-wrap">
+              {Object.entries(lot.stages).map(([stage, val]) => (
+                <span key={stage} className={`inline-flex items-center px-2 py-1 rounded ${val ? "bg-green-100 text-green-800" : "bg-gray-200 text-gray-500"} mr-1`}>
+                  {val ? <CheckCircle size={14} className="mr-1" /> : <XCircle size={14} className="mr-1" />}
+                  {t.stages && t.stages[stage] ? t.stages[stage] : stage}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="mb-3">
+            <div className="font-bold">{t.compliance} Scores:</div>
+            {Object.entries(lot.compliance).map(([k,v]) => (
+              <span key={k} className="px-2 py-1 mr-2 rounded bg-gray-50 border" style={{color:v>=90?'#10b981':v>=70?'#f59e0b':'#ef4444',fontWeight:600}}>
+                {k.toUpperCase()}: {v}
+              </span>
+            ))}
+          </div>
+          <div className="mb-3">
+            <div className="font-bold">{t.chain}:</div>
+            <div className="flex gap-2 flex-wrap">
+              {lot.chainOfTitle.map((actor,x) => (
+                <span key={x} className="px-3 py-1 rounded bg-slate-100 border text-gray-700 font-bold">{actor}</span>
+              ))}
+            </div>
+          </div>
+          <div className="mb-3">
+            <div className="font-bold">{t.tests}:</div>
+            {Object.entries(lot.tests).map(([test, value]) => (
+              <span key={test} className="px-2 py-1 mr-2 rounded bg-blue-50 border">{test}: {value}</span>
+            ))}
+          </div>
+          <div className="flex gap-3 mt-3 justify-end">
+            <button className="bg-green-700 text-white px-3 py-2 rounded flex items-center gap-2" onClick={()=>window.print()}><Printer size={16}/>{t.print}</button>
+            <button className="bg-blue-600 text-white px-3 py-2 rounded flex items-center gap-2"><Download size={16}/>{t.pdf}</button>
+            <button className="bg-purple-700 text-white px-3 py-2 rounded flex items-center gap-2"><Share2 size={16}/>{t.email}</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+========== EnhancedTraceability.jsx ==========
+
+import React from 'react'; export default function EnhancedTraceability() { return <div>EnhancedTraceability loaded</div>; }
+
+
+========== Commodity.jsx ==========
+
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getUSDAData } from "../../lib/api";
+import Chart from "../../components/ui/Chart";
+import Table from "../../components/ui/Table";
+
+export default function USDACommodity() {
+  const { id } = useParams(); // e.g. "avocados"
+  const [results, setResults] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const data = await getUSDAData(id);
+      const normalized = data.map((r, i) => ({
+        week: r.week || r.WEEK || `W${i + 1}`,
+        price: r.price || r.VALUE || null
+      }));
+      setResults(normalized);
+    })();
+  }, [id]);
+
+  return (
+    <div>
+      <h1 className="text-xl font-bold mb-4">{id} Pricing (USDA)</h1>
+      {results.length === 0 ? (
+        <p>No Data Available</p>
+      ) : (
+        <>
+          <Chart data={results} xKey="week" yKey="price" />
+          <div className="mt-6">
+            <Table
+              headers={["Week", "Price"]}
+              rows={results.map(r => [r.week, r.price ? `$${r.price}` : "â€”"])}
+            />
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+
+========== LatinAmericaDashboard.jsx ==========
+
+cd C:\AuditDNA\AUDIT_DNA_Frontend_Final\frontend
+
+# Create the latin folder if it doesn't exist
+New-Item -ItemType Directory -Force -Path ".\src\pages\latin"
+
+# Create LatinAmericaDashboard.jsx
+@'
+import React from 'react';
+import { useLanguage } from '../../LanguageContext';
+
+function LatinAmericaDashboard() {
+  const { language } = useLanguage();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-center mb-8 text-blue-800">
+          Latin America Dashboard
+        </h1>
+        
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-semibold mb-4">Welcome to Latin America Dashboard</h2>
+          <p className="text-gray-600">Dashboard content will appear here.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default LatinAmericaDashboard;
+'@ | Out-File -FilePath ".\src\pages\latin\LatinAmericaDashboard.jsx" -Encoding UTF8
+
+Write-Host "âœ… LatinAmericaDashboard.jsx created!" -ForegroundColor Green
+Write-Host "Now run: npm start" -ForegroundColor Cyan
+
+========== LatinAmericaTrade.jsx ==========
+
+import React from 'react'; export default function LatinAmericaTrade() { return <div>LatinAmericaTrade loaded</div>; }
+
+
+========== GrowersDirectory.jsx ==========
+
+import React from 'react'; export default function GrowersDirectory() { return <div>GrowersDirectory loaded</div>; }
+
+
+========== Compliance.jsx ==========
+
+import React from "react";
+export default function Compliance() {
+  return <div className='p-8 text-3xl font-bold'>Compliance Module Coming Soon!</div>;
+}
+
+
+========== AgMarketplace.jsx ==========
+
+import React, { useMemo, useState } from "react";
+import { useI18n } from "../i18n/useI18n";
+// ...full AgMarketplace code from above...
+export default AgMarketplace;
+
+
+========== AgMainPage.jsx ==========
+
+import React from "react";
+import RequireLogin from "../components/RequireLogin";
+import ProduceTrendsAll from "../components/ProduceTrendsAll";
+export default function AgMainPage() {
+  return (
+    <RequireLogin>
+      <ProduceTrendsAll />
+    </RequireLogin>
+  );
+}
+
+
+========== ProduceMarketWeekly.jsx ==========
+
+import React from 'react'; export default function ProduceMarketWeekly() { return <div>ProduceMarketWeekly loaded</div>; }
+

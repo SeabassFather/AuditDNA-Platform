@@ -1,0 +1,369 @@
+﻿ M .env
+ M .eslintrc.json
+ M .gitignore
+ M MexicoLoanMatcher.jsx
+ M README.md
+ D docs
+ M netlify.toml
+ M package-lock.json
+ M postcss.config.js
+ M public/index.html
+ M src/App.css
+ M src/App.jsx
+ M src/api.js
+ M src/components/AgentRegistrationCard.jsx
+ M src/components/AgentRegistrationForm.jsx
+ M src/components/App.js
+ M src/components/AppraisalServicesCard.jsx
+ M src/components/AuditProcessInfo.jsx
+ M src/components/ContactCard.jsx
+ M src/components/Dashboard.js
+ M src/components/DashboardCard.css
+ M src/components/DocumentUploader.jsx
+ M src/components/DynamicAuditModule.jsx
+ M src/components/FacialRecognition.jsx
+ M src/components/Footer.jsx
+ M src/components/GrowerProfileModal.jsx
+ M src/components/LegalQuestionnaireCard.jsx
+ M src/components/MexicoRealEstate.jsx
+ M src/components/MexicoRefiCard.jsx
+ M src/components/MortgageTabUS.jsx
+ M src/components/OwnerBuyerForm.jsx
+ M src/components/PropertyListings.jsx
+ M src/components/PropertySearch.jsx
+ M src/components/RateTicker.jsx
+ M src/components/ReferralPartnerCard.jsx
+ M src/components/Scanner.jsx
+ M src/components/SearchEngines.js
+ M src/components/ServiceDrawer.jsx
+ M src/components/ServiceRequestCard.jsx
+ M src/components/Services.jsx
+ M src/components/ServicesAndCompliancePage.jsx
+ M src/components/ServicesComplianceAccordion.jsx
+ M src/components/ServicesTab.js
+ M src/components/ShortForm1003Sidebar.js
+ M src/components/SupplierIntelligenceCard.jsx
+ M src/components/TopRibbonTicker.jsx
+ M src/components/agricultureServices.js
+ M src/components/mortgageServices.js
+ M src/components/produceTop100.js
+ M src/components/servciesData.js
+ M src/components/serviceData.js
+ M src/components/serviceDetails.js
+ M src/config/db.js
+ M src/data/AuditDNAServiceCatalog.jsx
+ M src/data/Services.js
+ M src/data/agriTests.json
+ M src/data/cropsTaxonomy.js
+ M src/data/growerDatabase.js
+ M src/data/services.json
+ M src/data/services/agricultureServices.js
+ M src/data/services/mortgageServices.js
+ M src/data/services/serviceDetails.js
+ M src/data/services/servicesData.js
+ M src/data/servicesExpanded.json
+ M src/data/servicesMegaCatalog.json
+ M src/data/spartan_services.json
+ M src/data/waterSoilTests.json
+ M src/data/waterSources.json
+ M src/features/ag/AgMarket.jsx.bak.20250821145640
+ M src/features/ag/AgMarket.jsx.bak.20250821145823
+ M src/features/ag/AgMarket.jsx.bak.20250821150410
+ M src/features/ag/AgMarket.jsx.bak.20250821150525
+ M src/features/ag/AgMarket.jsx.bak.20250821150655
+ M src/features/ag/AgMarket.jsx.bak.20250821150925
+ M src/features/ag/CommodityExplorer.jsx.bak.20250905-154255
+ M src/features/docusign/DocuSignPanel.jsx
+ M src/features/files/FileUpload.jsx
+ M src/i18n/I18nProvider.jsx
+ M src/i18n/useI18n.js
+ M src/index.css
+ M src/lib/Uploads.js
+ M src/lib/api.js
+ M src/lib/services/agriculture.json
+ M src/lib/services/compliance.json
+ M src/pages/Admin.js
+ M src/pages/Admin.jsx
+ M src/pages/AdminDashboard.jsx
+ M src/pages/AgExplorer.jsx
+ M src/pages/AgMarketSearchPage.jsx
+ M src/pages/AgMarketplace.jsx
+ M src/pages/AgentDashboard.jsx
+ M src/pages/AgentRegistration.jsx
+ M src/pages/AuditCatalogPage.jsx
+ M src/pages/AuditDNAApp.jsx
+ M src/pages/AuditDNAPage.jsx
+ M src/pages/AuditDNAServiceCatalog.jsx
+ M src/pages/CasesPage.jsx
+ M src/pages/CommissionAgreement.jsx
+ M src/pages/Compliance.jsx
+ M src/pages/ConstructionProjectCard.jsx
+ M src/pages/ContactCard.jsx
+ M src/pages/Dashboard.jsx
+ M src/pages/DocumentUploader.jsx
+ M src/pages/Factoring.jsx
+ M src/pages/FileUploads.jsx
+ M src/pages/FiveVerificationEngines.jsx
+ M src/pages/Home.jsx
+ M src/pages/MexicoLoans.jsx
+ M src/pages/MexicoRefiCard.jsx
+ M src/pages/Mortgage.jsx
+ M src/pages/MortgageSearchEngine.jsx
+ M src/pages/MortgageTabMexico.jsx
+ M src/pages/MortgageTabRealEstate.jsx
+ M src/pages/MortgageTabRealEstate.jsx.backup
+ M src/pages/MortgageTabRealEstate.jsx.backup20251007-111624
+ M src/pages/MortgageTabUS.jsx
+ M src/pages/NotificationCenter.jsx
+ M src/pages/OwnerBuyerForm.jsx
+ M src/pages/OwnerContactCard.jsx
+ M src/pages/PitchDeckPage.jsx
+ M src/pages/PropertySearch.jsx
+ M src/pages/PropertyUploadForm.jsx
+ M src/pages/Search.jsx
+ M src/pages/ServiceCategoryDetail.jsx
+ M src/pages/ServiceDetail.jsx
+ M src/pages/Services.jsx.backup
+ M src/pages/ServicesExplorer.jsx
+ M src/pages/Ticker.js
+ M src/pages/TradeFinance.jsx
+ M src/pages/TradePortal.js
+ M src/pages/USDA.jsx
+ M src/pages/USDA.jsx.bak.20250929-173344
+ M src/pages/USDAGrowerSearchEngine.jsx
+ M src/pages/USDAMarketplace.jsx
+ M src/pages/WaterTech.jsx
+ M src/pages/footer.jsx
+ M src/pages/marketpricespage.jsx
+ M src/pages/navbar.jsx
+ D src/pages/netlify.toml
+ M src/pages/producemarketpie.jsx
+ M src/pages/producepricechart.jsx
+ M src/pages/producetrendpage.jsx
+ M src/pages/producetrendsall.jsx
+ M src/pages/searchenginessection.jsx
+ M src/pages/servicepage.jsx
+ M src/pages/topnav.jsx
+ M src/services/services.json
+ M src/services/waterService.js
+ M src/utils/agMarketplaceAPI.js
+ M src/utils/aiMatchmaking.js
+ M src/utils/api.js
+ M src/utils/auth.js
+ M src/utils/tradeFinanceAPI.js
+ M tailwind.config.js
+?? APP_UPDATE_INSTRUCTIONS.txt
+?? Admin.js
+?? Admin.jsx
+?? AdminDashboard.jsx
+?? AgExplorer.jsx
+?? AgMainPage.jsx
+?? AgMarketplace.jsx
+?? AgentDashboard.jsx
+?? AgentRegistration.jsx
+?? Agriculture.jsx
+?? Analytics.jsx
+?? App.js
+?? AuditDNAEnvAI.jsx
+?? BACKUP_BEFORE_GLASS_20251027_180440/
+?? COMPLETE_SYSTEM_BACKUP_20251028_130320/
+?? Compliance.jsx
+?? EMERGENCY_BACKUP_20251027_181959/
+?? FEATURES.txt
+?? FINAL_BACKUP_20251028_120912/
+?? FORCE_REBUILD.bat
+?? FuelOilAnalysis.jsx
+?? InvoiceFinancing.jsx
+?? MexicoOps.jsx
+?? NUCLEAR_RESET.bat
+?? QUICK_START.txt
+?? RealEstate.jsx
+?? SEABASSFATHER_DADDIES_FILE_1_WATER_SOIL_AG.txt
+?? START_CLEAN.bat
+?? TESTING_API_ROUTES.js
+?? TESTING_SERVICES_COMPLETE.txt
+?? TESTING_SERVICES_PRICING.txt
+?? Tariffs.jsx
+?? TradeFinance.jsx
+?? USDA.jsx
+?? WATER_SOIL_MODULES.txt
+?? apps/
+?? autoscaffold-watertech.ps1
+?? conflicted_files_list.txt
+?? conflicted_marker_files_20251101-123605.txt
+?? copy_frontend_to_final.ps1
+?? create_a_b_c.ps1
+?? create_and_push_powerpony.ps1
+?? create_pki_stripe.ps1
+?? create_powerpony_1_6.ps1
+?? create_powerpony_all.ps1
+?? create_powerpony_minimal.ps1
+?? create_shortcuts.ps1
+?? docs~HEAD
+?? "e --abbrev-ref HEAD)"
+?? "e --abbrev-ref HEAD) 2\357\200\276&1 \357\201\274 Write-Host"
+?? "et HEAD ."
+?? fix_app_session_20251029-183012.txt
+?? fix_nested_frontend_copy.ps1
+?? fix_nested_transcript_20251029-171121.txt
+?? fix_progress_20251029-174858.txt
+?? fix_session_20251029-182731.txt
+?? frontend/BACKUP_BEFORE_GLASS_20251027_180440/components/supplier-intel-standalone.html
+?? frontend/COMPLETE_SYSTEM_BACKUP_20251028_130320/components/supplier-intel-standalone.html
+?? frontend/EMERGENCY_BACKUP_20251027_181959/components/supplier-intel-standalone.html
+?? frontend/FINAL_BACKUP_20251028_120912/components/supplier-intel-standalone.html
+?? frontend/apps/agriculture-app/public/index.html
+?? frontend/apps/financial-app/public/index.html
+?? frontend/apps/realestate-app/public/index.html
+?? frontend/index.html
+?? frontend/public/catalog-preview.html
+?? frontend/public/index.html
+?? frontend/public/superman-catalog-demo.html
+?? frontend/src/components/supplier-intel-standalone.html
+?? frontend/src/public/index.html
+?? frontend_html_check.ps1
+?? git_status_after_recovery_20251101-123605.txt
+?? kill_port_3000.ps1
+?? npm_install_20251029-182535.log
+?? npm_install_20251029-182731.log
+?? npm_install_20251029-183012.log
+?? npm_start_20251029-182535.log
+?? package.json.broken_20251029-181146
+?? public/favicon.ico
+?? public/logo192.png
+?? public/logo512.png
+?? public/manifest.json
+?? public/robots.txt
+?? recovery_transcript_20251029-182535.txt
+?? run_auditdna_backend.ps1
+?? run_auditdna_stack.bat
+?? save_auditdna_ui.ps1
+?? scripts/inspect_and_protect.ps1
+?? session_transcript_20251029-182228.txt
+?? src/AGSciencesModule.jsx
+?? src/AGSciencesModule_OLD_BACKUP.jsx
+?? src/AG_CATALOG_EXPANSION_PLAN.txt
+?? src/AI_SOUND_FIX_INSTRUCTIONS.txt
+?? src/AgGerminationModule.jsx
+?? src/AgScienceDashboard.jsx
+?? src/AgScienceDashboard_backup.jsx
+?? src/AlcoholAnalysis.css
+?? src/AlcoholAnalysisModule.jsx
+?? src/AlcoholTestingModule.jsx
+?? src/App.js.backup
+?? src/App.js.backup_20251028_105119
+?? src/App.js.bak_20251029-183012
+?? src/App.js.corrupted.backup
+?? src/App.jsx.backup.20251026-163507
+?? src/App.jsx.backup.20251027_130145
+?? src/App.test.emergency.jsx
+?? src/AreaConverter.jsx
+?? src/AuditDNAEnvAI.css
+?? src/AuditDNAEnvAI.jsx
+?? src/AuditDNAEnvAI.jsx.backup.20251027_120039
+?? src/AuditDNAEnvAI_broken.jsx
+?? src/AuditDNAHeader.jsx
+?? src/BillingComponent.jsx
+?? src/CLEAN_AI_SOUND_FIX.txt
+?? src/CRMAnalyticsDashboard.jsx
+?? src/CartContext.jsx
+?? src/CartPage.jsx
+?? src/CheckoutPage.jsx
+?? src/ContactCardComponent.jsx
+?? src/ContactPage.jsx
+?? src/Dashboard.jsx
+?? src/EnginePerformanceModule.jsx
+?? src/EnvironmentalAnalyzer.jsx
+?? src/EpicProgressSteps.jsx
+?? src/ExportUtils.jsx
+?? src/FieldConditionsLogger.jsx
+?? src/FileUploadComponent.jsx
+?? src/Footer.jsx
+?? src/FuelOilAnalysis.css
+?? src/FuelOilAnalysisModule.jsx
+?? src/FuelTestingModule.jsx
+?? src/HomePage.jsx
+?? src/HomePage_Fixed.jsx
+?? src/HomePage_Fixed_NO_PURPLE.jsx
+?? src/LabDashboard.jsx
+?? src/LanguageContext.jsx
+?? src/LanguageToggle.jsx
+?? src/Loader.jsx
+?? src/Marketplace.jsx
+?? src/MicroFrontendLoader.jsx
+?? src/Navbar.jsx
+?? src/OrdersPage.jsx
+?? src/ProduceIntelligenceModule.jsx
+?? src/ProduceScienceVerification.jsx
+?? src/QRCodeComponent.jsx
+?? src/QRCodeGenerator.jsx
+?? src/ResultsPortal.jsx
+?? src/SearchableTestSelector.jsx
+?? src/SoilAnalysis.css
+?? src/SoilAnalysisModule.jsx
+?? src/TestingServices.css
+?? src/TestingServicesHub.jsx
+?? src/TestingServicesHub.jsx.BROKEN
+?? src/Traceability.jsx
+?? src/TraceabilityModule.jsx
+?? src/TraceabilityTracker.jsx
+?? src/UploadCenter.jsx
+?? src/WaterTech.css
+?? src/WaterTechAdvanced.css
+?? src/WaterTechModuleAdvanced.jsx
+?? src/WaterTechModuleAdvanced.jsx.BROKEN_BACKUP
+?? src/agCategories.js
+?? src/agGerminationCatalog.js
+?? src/agTestCatalog.js
+?? src/agTestCatalog_backup.js
+?? src/agTestLoader.js
+?? src/aiAnalysisEngine.js
+?? src/alcoholTestCatalog.js
+?? src/audioSystem.js
+?? src/colors.css
+?? src/components/AttestationForm.jsx
+?? src/components/DashboardCard.jsx
+?? src/components/Footer.js.bak_20251029-183231
+?? src/components/Footers.js
+?? src/components/GrowerDashboard.jsx
+?? src/components/Loading.jsx
+?? src/components/MegaNavbar.jsx
+?? src/components/RREADME.md
+?? src/components/UploadWidget.jsx
+?? src/components/VerificationPortal.jsx
+?? src/components/WaterSearch.jsx
+?? src/components/usda/
+?? src/config/features.js
+?? src/engineTestCatalog.js
+?? src/fuelOilTestCatalog.js
+?? src/gasTestCatalog.js
+?? src/glassmorphism.css
+?? src/index.js.bak_20251029-182731
+?? src/modules/
+?? src/oilTestCatalog.js
+?? src/pages/AgentExplorer.jsx
+?? src/pages/Agriculture.jsx
+?? src/pages/Analytics.jsx
+?? src/pages/AuditDNAUniverseMap.jsx
+?? src/pages/FinancialServices.jsx
+?? src/pages/FrozenAvocadoGuacamole.jsx
+?? src/pages/InvoiceFinancing.jsx
+?? src/pages/Megadashboard.jsx
+?? src/pages/MexicoLoanMatcher.jsx
+?? src/pages/MexicoOps.jsx
+?? src/pages/RealEstate.jsx
+?? src/pages/Tariffs.jsx
+?? src/pages/Traceabilitymodule.jsx
+?? src/simple-theme.css
+?? src/soilTestCatalog.js
+?? src/src/
+?? src/styles/auditdna-theme.css
+?? src/styles/tailwind.config.js
+?? src/translations.js
+?? src/waterTestCatalog.js
+?? "t \357\200\242`n=== STAGED FILES ===\357\200\242"
+?? "t-Path .gitignore)) { New-Item -ItemType File -Path .gitignore -Force \357\201\274 Out-Null }"
+?? "ted frontend copy (moved to transfer_backups)\357\200\242"
+?? "ted frontend copy (moved to transfer_backups)\357\200\242 2\357\200\276&1 \357\201\274 Write-Host"
+?? transfer_transcript_20251029-164859.txt
+?? watertech-traceability-scaffold.ps1
