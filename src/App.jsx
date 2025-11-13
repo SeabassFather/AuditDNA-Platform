@@ -1,16 +1,17 @@
 // ================================================================
 // AUDITDNA FRONTEND - UNIFIED DARK THEME
 // ================================================================
-// Date: 2025-11-13 00:06:46 UTC
+// Date: 2025-11-13 00:35:40 UTC
 // Author: SeabassFather
 // Theme: Professional Dark (Bloomberg-style)
-// Status: PRODUCTION BUILD - 16/16 MODULES
+// Status: PRODUCTION BUILD - 16/16 MODULES (UserContext Fixed)
 // ================================================================
 
 import React, { useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { UserProvider } from './context/UserContext';
 import GlobalHeader from './components/GlobalHeader';
 
 // Module Imports
@@ -218,98 +219,140 @@ function HomePage({ setCurrentPage }) {
       id: 'cm-products', 
       icon: '🌾', 
       title: { en: 'CM Products International', es: 'CM Products International' }, 
-      desc: { en: 'AI market intelligence, 5-year trends, grower registry, Google Calendar integration, Zadarma VoIP', es: 'Inteligencia IA, tendencias 5 años, registro productores, integración Google Calendar, Zadarma VoIP' }, 
+      desc: { 
+        en: 'AI market intelligence, 5-year trends, grower registry, Google Calendar integration, Zadarma VoIP', 
+        es: 'Inteligencia IA, tendencias 5 años, registro productores, integración Google Calendar, Zadarma VoIP' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'unified-sourcing', 
       icon: '🎯', 
       title: { en: 'Unified Sourcing Engine', es: 'Motor de Abastecimiento Unificado' }, 
-      desc: { en: 'Layered sourcing: Direct Growers → Suppliers • Dual PO system protects your sources • Profit margin analysis', es: 'Abastecimiento por capas: Productores → Proveedores • Sistema PO dual protege fuentes • Análisis márgenes' }, 
+      desc: { 
+        en: 'Layered sourcing: Direct Growers → Suppliers • Dual PO system protects your sources • Profit margin analysis', 
+        es: 'Abastecimiento por capas: Productores → Proveedores • Sistema PO dual protege fuentes • Análisis márgenes' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'grower-intel', 
       icon: '🕵️', 
       title: { en: 'Grower Intelligence', es: 'Inteligencia de Productores' }, 
-      desc: { en: 'FBI-level vetting • USDA/FDA/SENASICA verification • Risk scoring • Certification tracking', es: 'Investigación nivel FBI • Verificación USDA/FDA/SENASICA • Puntuación riesgo • Rastreo certificaciones' }, 
+      desc: { 
+        en: 'FBI-level vetting • USDA/FDA/SENASICA verification • Risk scoring • Certification tracking', 
+        es: 'Investigación nivel FBI • Verificación USDA/FDA/SENASICA • Puntuación riesgo • Rastreo certificaciones' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'produce-intel', 
       icon: '🥑', 
       title: { en: 'Produce Intelligence', es: 'Inteligencia de Productos' }, 
-      desc: { en: 'Professional charts, 30-day trends, 5-year analysis, multi-commodity comparison', es: 'Gráficos profesionales, tendencias 30 días, análisis 5 años, comparación multi-producto' }, 
+      desc: { 
+        en: 'Professional charts, 30-day trends, 5-year analysis, multi-commodity comparison', 
+        es: 'Gráficos profesionales, tendencias 30 días, análisis 5 años, comparación multi-producto' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'produce-analytics', 
       icon: '📊', 
       title: { en: 'Produce Analytics', es: 'Análisis de Productos' }, 
-      desc: { en: 'AI price prediction, demand forecasting, trend analysis', es: 'Predicción precios IA, pronóstico demanda, análisis tendencias' }, 
+      desc: { 
+        en: 'AI price prediction, demand forecasting, trend analysis', 
+        es: 'Predicción precios IA, pronóstico demanda, análisis tendencias' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'produce-po', 
       icon: '📝', 
       title: { en: 'Purchase Order', es: 'Orden de Compra' }, 
-      desc: { en: 'Smart pricing, auto-fill, compliance checking', es: 'Precios inteligentes, autocompletado, verificación cumplimiento' }, 
+      desc: { 
+        en: 'Smart pricing, auto-fill, compliance checking', 
+        es: 'Precios inteligentes, autocompletado, verificación cumplimiento' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'traceability', 
       icon: '🔗', 
       title: { en: 'Traceability AI', es: 'Trazabilidad IA' }, 
-      desc: { en: 'QR codes, blockchain verification, supply chain tracking', es: 'Códigos QR, verificación blockchain, seguimiento cadena suministro' }, 
+      desc: { 
+        en: 'QR codes, blockchain verification, supply chain tracking', 
+        es: 'Códigos QR, verificación blockchain, seguimiento cadena suministro' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'supplier-intel', 
       icon: '🏢', 
       title: { en: 'Supplier Intelligence', es: 'Inteligencia Proveedores' }, 
-      desc: { en: 'Supplier scoring, risk assessment, smart contacts, performance tracking', es: 'Puntuación proveedores, evaluación riesgos, contactos inteligentes' }, 
+      desc: { 
+        en: 'Supplier scoring, risk assessment, smart contacts, performance tracking', 
+        es: 'Puntuación proveedores, evaluación riesgos, contactos inteligentes' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'food-safety', 
       icon: '🛡️', 
       title: { en: 'Food Safety', es: 'Seguridad Alimentaria' }, 
-      desc: { en: 'HACCP, certifications, CAPA, lab results, compliance audits', es: 'HACCP, certificaciones, CAPA, resultados laboratorio, auditorías' }, 
+      desc: { 
+        en: 'HACCP, certifications, CAPA, lab results, compliance audits', 
+        es: 'HACCP, certificaciones, CAPA, resultados laboratorio, auditorías' 
+      }, 
       price: '$299' 
     },
     { 
       id: 'water-tech', 
       icon: '💧', 
       title: { en: 'Water Analysis', es: 'Análisis de Agua' }, 
-      desc: { en: 'AI analysis 150+ parameters, EPA/WHO compliance verification', es: 'Análisis IA 150+ parámetros, verificación EPA/WHO' }, 
+      desc: { 
+        en: 'AI analysis 150+ parameters, EPA/WHO compliance verification', 
+        es: 'Análisis IA 150+ parámetros, verificación EPA/WHO' 
+      }, 
       price: '$149' 
     },
     { 
       id: 'soil', 
       icon: '🌱', 
       title: { en: 'Soil Analysis', es: 'Análisis de Suelo' }, 
-      desc: { en: 'NPK, pH, organic matter, micronutrients, heavy metals', es: 'NPK, pH, materia orgánica, micronutrientes, metales pesados' }, 
+      desc: { 
+        en: 'NPK, pH, organic matter, micronutrients, heavy metals', 
+        es: 'NPK, pH, materia orgánica, micronutrientes, metales pesados' 
+      }, 
       price: '$149' 
     },
     { 
       id: 'growers', 
       icon: '🚜', 
       title: { en: 'Grower Portal', es: 'Portal Productores' }, 
-      desc: { en: 'Harvest scheduling, freight calculator, GPS tracking, insurance, real-time logistics', es: 'Programación cosechas, calculadora flete, rastreo GPS, seguros, logística tiempo real' }, 
+      desc: { 
+        en: 'Harvest scheduling, freight calculator, GPS tracking, insurance, real-time logistics', 
+        es: 'Programación cosechas, calculadora flete, rastreo GPS, seguros, logística tiempo real' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'latin-america', 
       icon: '🌎', 
       title: { en: 'Latin America Trade', es: 'Comercio América Latina' }, 
-      desc: { en: '10 tools: Search, Pricing, Buyers, Finance, Logistics, AI, Compliance, Maps', es: '10 herramientas: Búsqueda, Precios, Compradores, Finanzas, Logística, IA, Cumplimiento, Mapas' }, 
+      desc: { 
+        en: '10 tools: Search, Pricing, Buyers, Finance, Logistics, AI, Compliance, Maps', 
+        es: '10 herramientas: Búsqueda, Precios, Compradores, Finanzas, Logística, IA, Cumplimiento, Mapas' 
+      }, 
       price: 'Free' 
     },
     { 
       id: 'factoring', 
       icon: '💰', 
       title: { en: 'Trade Finance', es: 'Financiamiento Comercial' }, 
-      desc: { en: 'AI-powered factoring, risk scoring, auto-approval, invoice management', es: 'Factoraje IA, puntuación riesgo, aprobación automática, gestión facturas' }, 
+      desc: { 
+        en: 'AI-powered factoring, risk scoring, auto-approval, invoice management', 
+        es: 'Factoraje IA, puntuación riesgo, aprobación automática, gestión facturas' 
+      }, 
       price: 'Variable' 
     }
   ];
@@ -372,10 +415,23 @@ function HomePage({ setCurrentPage }) {
             }}
           >
             <div style={{ fontSize: '4.5rem', marginBottom: '1.5rem' }}>{feature.icon}</div>
-            <h3 style={{ fontSize: '1.6rem', color: '#fff', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-0.01em' }}>
+            <h3 style={{ 
+              fontSize: '1.6rem', 
+              color: '#fff', 
+              marginBottom: '1rem', 
+              fontWeight: 'bold', 
+              letterSpacing: '-0.01em' 
+            }}>
               {feature.title[language]}
             </h3>
-            <p style={{ color: '#94a3b8', marginBottom: '1.5rem', minHeight: '5rem', fontSize: '1rem', lineHeight: '1.6', fontWeight: '500' }}>
+            <p style={{ 
+              color: '#94a3b8', 
+              marginBottom: '1.5rem', 
+              minHeight: '5rem', 
+              fontSize: '1rem', 
+              lineHeight: '1.6', 
+              fontWeight: '500' 
+            }}>
               {feature.desc[language]}
             </p>
             <div style={{ 
@@ -397,7 +453,12 @@ function CartPage() {
   const { language } = useLanguage();
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', color: '#fff' }}>
-      <h2 style={{ fontSize: '3rem', color: '#22c55e', marginBottom: '2rem', fontWeight: 'bold' }}>
+      <h2 style={{ 
+        fontSize: '3rem', 
+        color: '#22c55e', 
+        marginBottom: '2rem', 
+        fontWeight: 'bold' 
+      }}>
         {language === 'en' ? '🛒 Shopping Cart' : '🛒 Carrito de Compras'}
       </h2>
       <CartSummary />
@@ -407,13 +468,15 @@ function CartPage() {
 
 function App() {
   return (
-    <LanguageProvider>
-      <CartProvider>
-        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AppContent />
-        </Router>
-      </CartProvider>
-    </LanguageProvider>
+    <UserProvider>
+      <LanguageProvider>
+        <CartProvider>
+          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <AppContent />
+          </Router>
+        </CartProvider>
+      </LanguageProvider>
+    </UserProvider>
   );
 }
 

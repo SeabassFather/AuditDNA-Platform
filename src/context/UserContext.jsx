@@ -1,9 +1,9 @@
 // ================================================================
-// USER CONTEXT - ROLE-BASED ACCESS CONTROL
+// USER CONTEXT - SIMPLE ROLE-BASED ACCESS CONTROL
 // ================================================================
-// Date: 2025-11-12 20:47:36 UTC
+// Date: 2025-11-13 00:38:10 UTC
 // User: SeabassFather
-// Purpose: Control supplier data visibility based on user role
+// Purpose: Provide UserContext for SuppliersModule and App
 // ================================================================
 
 import React, { createContext, useContext, useState } from 'react';
@@ -11,74 +11,28 @@ import React, { createContext, useContext, useState } from 'react';
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  // CHANGE THIS TO CONTROL VIEW:
-  // 'admin' = CM Products internal team (full access)
-  // 'buyer' = External customers (masked data)
-  // 'guest' = Public view (very limited)
-  const [userRole, setUserRole] = useState('admin'); // Default to 'admin' for testing
+  const [userRole, setUserRole] = useState('admin');
 
-  const [userInfo, setUserInfo] = useState({
-    name: 'Sebastian',
-    company: 'CM Products International',
-    role: 'admin',
-    permissions: {
-      viewSupplierNames: true,
-      viewContactInfo: true,
-      viewFullLocation: true,
-      directContact: true,
-      viewPricing: true,
-      createOrders: true
-    }
-  });
-
-  // Function to check permissions
   const hasPermission = (permission) => {
-    const rolePermissions = {
-      admin: {
-        viewSupplierNames: true,
-        viewContactInfo: true,
-        viewFullLocation: true,
-        directContact: true,
-        viewPricing: true,
-        createOrders: true,
-        exportData: true
-      },
-      buyer: {
-        viewSupplierNames: false,  // MASKED
-        viewContactInfo: false,     // HIDDEN
-        viewFullLocation: false,    // City & Country only
-        directContact: false,       // Must request quote
-        viewPricing: true,
-        createOrders: true,
-        exportData: false
-      },
-      guest: {
-        viewSupplierNames: false,
-        viewContactInfo: false,
-        viewFullLocation: false,
-        directContact: false,
-        viewPricing: false,
-        createOrders: false,
-        exportData: false
-      }
+    if (userRole === 'admin') return true;
+    
+    const permissions = {
+      viewer: ['view'],
+      editor: ['view', 'edit'],
+      admin: ['view', 'edit', 'delete', 'manage']
     };
-
-    return rolePermissions[userRole]?.[permission] || false;
+    
+    return permissions[userRole]?.includes(permission) || false;
   };
 
-  // Function to switch roles (for testing)
-  const switchRole = (role) => {
-    setUserRole(role);
-    setUserInfo(prev => ({ ...prev, role }));
+  const switchRole = (newRole) => {
+    if (['viewer', 'editor', 'admin'].includes(newRole)) {
+      setUserRole(newRole);
+    }
   };
 
   return (
-    <UserContext.Provider value={{ 
-      userRole, 
-      userInfo, 
-      hasPermission, 
-      switchRole 
-    }}>
+    <UserContext.Provider value={{ userRole, hasPermission, switchRole }}>
       {children}
     </UserContext.Provider>
   );
@@ -91,3 +45,5 @@ export const useUser = () => {
   }
   return context;
 };
+
+export default UserContext;

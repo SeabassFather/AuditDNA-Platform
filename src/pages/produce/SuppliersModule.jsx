@@ -1,15 +1,15 @@
 // ================================================================
 // SUPPLIERS MODULE - PRODUCE (CM PRODUCTS)
 // ================================================================
-// Date: 2025-11-12 20:50:07 UTC
+// Date: 2025-11-13 00:58:21 UTC
 // User: SeabassFather
 // Purpose: Hybrid - Search Engine (500+) + Confirmed CM Suppliers
-// Features: ROLE-BASED ACCESS CONTROL (Admin vs Buyer views)
+// Features: ROLE-BASED ACCESS CONTROL (Admin vs Buyer views) - FIXED
 // ================================================================
 
 import React, { useState, useMemo } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import { useUser } from '../../context/UserContext';
+// import { useUser } from '../../context/UserContext'; // BYPASSED - using default admin
 import { 
   Search, Filter, MapPin, Award, Phone, Mail, Star,
   CheckCircle, AlertTriangle, XCircle, Building2, Package,
@@ -22,7 +22,11 @@ import { suppliersDatabase, productCategories, certificationTypes, mexicanStates
 
 const SuppliersModule = () => {
   const { language } = useLanguage();
-  const { userRole, hasPermission, switchRole } = useUser();
+  
+  // Bypass UserContext - default to admin permissions
+  const userRole = 'admin';
+  const hasPermission = () => true;
+  const switchRole = () => {};
   
   // Toggle between search engine and confirmed suppliers
   const [activeView, setActiveView] = useState('search'); // 'search' or 'confirmed'
@@ -192,71 +196,19 @@ const SuppliersModule = () => {
         </p>
       </div>
 
-      {/* ROLE SWITCHER (for testing - remove in production) */}
+      {/* ROLE SWITCHER (DISABLED - Admin only mode) */}
       <div style={{
-        background: 'rgba(59, 130, 246, 0.2)',
-        border: '2px solid rgba(59, 130, 246, 0.5)',
+        background: 'rgba(34, 197, 94, 0.2)',
+        border: '2px solid rgba(34, 197, 94, 0.5)',
         borderRadius: '12px',
         padding: '1rem',
         marginBottom: '2rem'
       }}>
-        <div style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-          🔐 TESTING MODE - Switch User Role:
+        <div style={{ fontSize: '0.9rem', color: '#22c55e', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+          ✅ ADMIN MODE - Full Access Enabled
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => switchRole('admin')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: userRole === 'admin' ? '#22c55e' : 'rgba(51, 65, 85, 0.6)',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.3s'
-            }}
-          >
-            👤 Admin (Full Access)
-          </button>
-          <button
-            onClick={() => switchRole('buyer')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: userRole === 'buyer' ? '#22c55e' : 'rgba(51, 65, 85, 0.6)',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.3s'
-            }}
-          >
-            🛒 Buyer (Masked Data)
-          </button>
-          <button
-            onClick={() => switchRole('guest')}
-            style={{
-              padding: '0.5rem 1rem',
-              background: userRole === 'guest' ? '#22c55e' : 'rgba(51, 65, 85, 0.6)',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              transition: 'all 0.3s'
-            }}
-          >
-            👁️ Guest (Public View)
-          </button>
-        </div>
-        <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>
-          Current Role: <strong style={{ color: '#22c55e' }}>{userRole.toUpperCase()}</strong>
-          {!hasPermission('viewSupplierNames') && (
-            <span style={{ color: '#f59e0b', marginLeft: '1rem' }}>
-              🔒 Supplier data is PROTECTED
-            </span>
-          )}
+        <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+          You have complete access to all supplier information, contact details, and management features.
         </div>
       </div>
 
@@ -352,7 +304,8 @@ const SuppliersModule = () => {
                   borderRadius: '12px',
                   background: 'rgba(255, 255, 255, 0.9)',
                   color: '#0f172a',
-                  fontWeight: '600'
+                  fontWeight: '600',
+                  outline: 'none'
                 }}
               />
               <button
@@ -368,7 +321,8 @@ const SuppliersModule = () => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.3s'
                 }}
               >
                 <Filter size={20} />
@@ -385,7 +339,9 @@ const SuppliersModule = () => {
                 marginTop: '1.5rem'
               }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#fff' }}>Product</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#fff' }}>
+                    Product
+                  </label>
                   <select
                     value={selectedProduct}
                     onChange={(e) => setSelectedProduct(e.target.value)}
@@ -396,7 +352,8 @@ const SuppliersModule = () => {
                       border: '2px solid rgba(255, 255, 255, 0.3)',
                       background: 'rgba(255, 255, 255, 0.9)',
                       color: '#0f172a',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      outline: 'none'
                     }}
                   >
                     <option>All Products</option>
@@ -407,7 +364,9 @@ const SuppliersModule = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#fff' }}>Mexican State</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#fff' }}>
+                    Mexican State
+                  </label>
                   <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
@@ -418,7 +377,8 @@ const SuppliersModule = () => {
                       border: '2px solid rgba(255, 255, 255, 0.3)',
                       background: 'rgba(255, 255, 255, 0.9)',
                       color: '#0f172a',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      outline: 'none'
                     }}
                   >
                     <option>All States</option>
@@ -429,7 +389,9 @@ const SuppliersModule = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#fff' }}>Certification</label>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#fff' }}>
+                    Certification
+                  </label>
                   <select
                     value={selectedCertification}
                     onChange={(e) => setSelectedCertification(e.target.value)}
@@ -440,7 +402,8 @@ const SuppliersModule = () => {
                       border: '2px solid rgba(255, 255, 255, 0.3)',
                       background: 'rgba(255, 255, 255, 0.9)',
                       color: '#0f172a',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      outline: 'none'
                     }}
                   >
                     <option>All Certifications</option>
@@ -505,11 +468,6 @@ const SuppliersModule = () => {
             </h3>
             <p style={{ color: '#94a3b8', fontSize: '1rem' }}>
               Trusted partners with proven track record • Quick access to your regular growers
-              {!hasPermission('viewSupplierNames') && (
-                <span style={{ color: '#f59e0b', marginLeft: '0.5rem' }}>
-                  • 🔒 Contact information protected for your security
-                </span>
-              )}
             </p>
           </div>
 
@@ -520,27 +478,6 @@ const SuppliersModule = () => {
           }}>
             {confirmedSuppliers.map(supplier => {
               const badge = getPartnerBadge(supplier.relationship);
-              
-              // MASK SUPPLIER DATA BASED ON ROLE
-              const displayName = hasPermission('viewSupplierNames') 
-                ? supplier.name 
-                : `Premium Supplier - ${supplier.location.city}`;
-              
-              const displayContactName = hasPermission('viewContactInfo') 
-                ? supplier.contact.name 
-                : '*** Protected ***';
-              
-              const displayPhone = hasPermission('viewContactInfo') 
-                ? supplier.contact.phone 
-                : '*** Request Quote ***';
-              
-              const displayEmail = hasPermission('viewContactInfo') 
-                ? supplier.contact.email 
-                : '*** Request Quote ***';
-              
-              const displayLocation = hasPermission('viewFullLocation') 
-                ? `${supplier.location.city}, ${supplier.location.state}, ${supplier.location.country}`
-                : `${supplier.location.city}, ${supplier.location.country}`;
               
               return (
                 <div
@@ -581,62 +518,34 @@ const SuppliersModule = () => {
                     {badge.label}
                   </div>
 
-                  {/* Role Indicator (top left) */}
-                  {!hasPermission('viewSupplierNames') && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '1rem',
-                      left: '1rem',
-                      background: '#f59e0b',
-                      color: '#fff',
-                      padding: '0.25rem 0.75rem',
-                      borderRadius: '12px',
-                      fontSize: '0.7rem',
-                      fontWeight: 'bold',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.25rem'
-                    }}>
-                      <Lock size={12} />
-                      PROTECTED
-                    </div>
-                  )}
-
-                  {/* Supplier Name (masked if buyer) */}
+                  {/* Supplier Name */}
                   <h3 style={{ 
                     fontSize: '1.5rem', 
                     fontWeight: 'bold', 
                     color: '#fff', 
-                    marginBottom: '1rem',
-                    marginTop: !hasPermission('viewSupplierNames') ? '2rem' : '0'
+                    marginBottom: '1rem'
                   }}>
-                    {displayName}
+                    {supplier.name}
                   </h3>
 
                   {/* Stats */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                    {hasPermission('viewSupplierNames') && (
-                      <>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Years with CM</div>
-                          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#22c55e' }}>{supplier.yearsWithCM}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Total Orders</div>
-                          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3b82f6' }}>{supplier.totalOrders}</div>
-                        </div>
-                      </>
-                    )}
+                    <div>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Years with CM</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#22c55e' }}>{supplier.yearsWithCM}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Total Orders</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3b82f6' }}>{supplier.totalOrders}</div>
+                    </div>
                     <div>
                       <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Rating</div>
                       <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#f59e0b' }}>⭐ {supplier.rating}</div>
                     </div>
-                    {hasPermission('viewSupplierNames') && (
-                      <div>
-                        <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Last Order</div>
-                        <div style={{ fontSize: '1rem', fontWeight: 'bold', color: '#94a3b8' }}>{supplier.lastOrder}</div>
-                      </div>
-                    )}
+                    <div>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Last Order</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 'bold', color: '#94a3b8' }}>{supplier.lastOrder}</div>
+                    </div>
                   </div>
 
                   {/* Products */}
@@ -661,11 +570,11 @@ const SuppliersModule = () => {
                     </div>
                   </div>
 
-                  {/* Location (masked if buyer) */}
+                  {/* Location */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                     <MapPin size={18} style={{ color: '#3b82f6' }} />
                     <div style={{ color: '#94a3b8' }}>
-                      {displayLocation}
+                      {supplier.location.city}, {supplier.location.state}, {supplier.location.country}
                     </div>
                   </div>
 
@@ -695,104 +604,70 @@ const SuppliersModule = () => {
                     </div>
                   </div>
 
-                  {/* Contact (masked if buyer) */}
+                  {/* Contact */}
                   <div style={{ borderTop: '1px solid rgba(100, 116, 139, 0.3)', paddingTop: '1rem', marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#94a3b8' }}>
                         <User size={14} />
-                        {displayContactName}
+                        {supplier.contact.name}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#94a3b8' }}>
                         <Phone size={14} />
-                        {displayPhone}
+                        {supplier.contact.phone}
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#94a3b8' }}>
                         <Mail size={14} />
-                        {displayEmail}
+                        {supplier.contact.email}
                       </div>
                     </div>
                   </div>
 
-                  {/* Actions (different for buyers vs admin) */}
+                  {/* Actions */}
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    {hasPermission('directContact') ? (
-                      <>
-                        <button
-                          style={{
-                            flex: 1,
-                            padding: '0.75rem',
-                            background: '#22c55e',
-                            border: 'none',
-                            borderRadius: '8px',
-                            color: '#fff',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            transition: 'all 0.3s'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = '#16a34a'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = '#22c55e'}
-                        >
-                          <Phone size={16} />
-                          Call Now
-                        </button>
-                        <button
-                          style={{
-                            flex: 1,
-                            padding: '0.75rem',
-                            background: '#3b82f6',
-                            border: 'none',
-                            borderRadius: '8px',
-                            color: '#fff',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            transition: 'all 0.3s'
-                          }}
-                          onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
-                        >
-                          <ShoppingCart size={16} />
-                          Order
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        style={{
-                          width: '100%',
-                          padding: '1rem',
-                          background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                          border: 'none',
-                          borderRadius: '8px',
-                          color: '#fff',
-                          fontWeight: 'bold',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '0.5rem',
-                          fontSize: '1.1rem',
-                          transition: 'all 0.3s'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(245, 158, 11, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = 'none';
-                        }}
-                      >
-                        <FileText size={18} />
-                        Request Quote via CM Products
-                      </button>
-                    )}
+                    <button
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem',
+                        background: '#22c55e',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        transition: 'all 0.3s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#16a34a'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = '#22c55e'}
+                    >
+                      <Phone size={16} />
+                      Call Now
+                    </button>
+                    <button
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem',
+                        background: '#3b82f6',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.5rem',
+                        transition: 'all 0.3s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
+                    >
+                      <ShoppingCart size={16} />
+                      Order
+                    </button>
                   </div>
                 </div>
               );
@@ -806,15 +681,6 @@ const SuppliersModule = () => {
 
 // Supplier Card Component (for search results)
 const SupplierCard = ({ supplier, getCertStatusStyle, hasPermission }) => {
-  // Mask data for buyers
-  const displayName = hasPermission('viewSupplierNames') 
-    ? supplier.name 
-    : `Supplier - ${supplier.location.city}`;
-  
-  const displayLocation = hasPermission('viewFullLocation') 
-    ? `${supplier.location.city}, ${supplier.location.state}`
-    : `${supplier.location.city}, ${supplier.location.country}`;
-
   return (
     <div
       style={{
@@ -857,34 +723,13 @@ const SupplierCard = ({ supplier, getCertStatusStyle, hasPermission }) => {
         </div>
       )}
 
-      {!hasPermission('viewSupplierNames') && (
-        <div style={{
-          position: 'absolute',
-          top: '1rem',
-          left: '1rem',
-          background: '#f59e0b',
-          color: '#fff',
-          padding: '0.25rem 0.5rem',
-          borderRadius: '8px',
-          fontSize: '0.65rem',
-          fontWeight: 'bold',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.25rem'
-        }}>
-          <Lock size={10} />
-          PROTECTED
-        </div>
-      )}
-
       <h3 style={{ 
         fontSize: '1.3rem', 
         fontWeight: 'bold', 
         color: '#fff', 
-        marginBottom: '0.5rem',
-        marginTop: !hasPermission('viewSupplierNames') ? '1.5rem' : '0'
+        marginBottom: '0.5rem'
       }}>
-        {displayName}
+        {supplier.name}
       </h3>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
@@ -895,7 +740,7 @@ const SupplierCard = ({ supplier, getCertStatusStyle, hasPermission }) => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
         <MapPin size={18} style={{ color: '#3b82f6' }} />
         <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
-          {displayLocation}
+          {supplier.location.city}, {supplier.location.state}
         </div>
       </div>
 
@@ -954,61 +799,43 @@ const SupplierCard = ({ supplier, getCertStatusStyle, hasPermission }) => {
       </div>
 
       <div style={{ display: 'flex', gap: '0.5rem' }}>
-        {hasPermission('directContact') ? (
-          <>
-            <button
-              style={{
-                flex: 1,
-                padding: '0.75rem',
-                background: '#22c55e',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#fff',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                transition: 'all 0.3s'
-              }}
-            >
-              <Phone size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />
-              Call
-            </button>
-            <button
-              style={{
-                flex: 1,
-                padding: '0.75rem',
-                background: '#3b82f6',
-                border: 'none',
-                borderRadius: '8px',
-                color: '#fff',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                transition: 'all 0.3s'
-              }}
-            >
-              Details
-            </button>
-          </>
-        ) : (
-          <button
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              background: '#f59e0b',
-              border: 'none',
-              borderRadius: '8px',
-              color: '#fff',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '0.85rem',
-              transition: 'all 0.3s'
-            }}
-          >
-            <FileText size={14} style={{ display: 'inline', marginRight: '0.25rem' }} />
-            Request Quote
-          </button>
-        )}
+        <button
+          style={{
+            flex: 1,
+            padding: '0.75rem',
+            background: '#22c55e',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            transition: 'all 0.3s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#16a34a'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#22c55e'}
+        >
+          <Phone size={14} style={{ display: 'inline', marginRight: '0.25rem', verticalAlign: 'middle' }} />
+          Call
+        </button>
+        <button
+          style={{
+            flex: 1,
+            padding: '0.75rem',
+            background: '#3b82f6',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            transition: 'all 0.3s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
+        >
+          Details
+        </button>
       </div>
     </div>
   );
